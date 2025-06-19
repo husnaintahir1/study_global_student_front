@@ -14,7 +14,7 @@ import { Layout } from '@/components/common/Layout';
 import { ROUTES } from '@/utils/constants';
 
 // Pages
-import { Login } from '@/pages/LoginForm';
+import { LoginForm } from '@/pages/LoginForm';
 import { Signup } from '@/pages/Signup';
 import { Dashboard } from '@/pages/Dashboard';
 import { Profile } from '@/pages/Profile';
@@ -35,7 +35,7 @@ function App() {
             <AppProvider>
               <Routes>
                 {/* Public Routes */}
-                <Route path={ROUTES.LOGIN} element={<Login />} />
+                <Route path={ROUTES.LOGIN} element={<LoginForm />} />
                 <Route path={ROUTES.SIGNUP} element={<Signup />} />
                 <Route path='/oauth-success' element={<OAuthSuccess />} />
                 <Route

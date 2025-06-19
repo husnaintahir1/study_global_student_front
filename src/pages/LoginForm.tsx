@@ -13,7 +13,7 @@ interface LoginFormData {
   password: string;
 }
 
-export const Login: React.FC = () => {
+export const LoginForm: React.FC = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
