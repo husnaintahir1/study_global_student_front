@@ -52,6 +52,7 @@ export const Appointments: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch appointments:', error);
     } finally {
+      
       setIsLoading(false);
     }
   };
