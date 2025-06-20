@@ -1,39 +1,125 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { StudentProfile } from '@/types';
 import { validators } from '@/utils/validators';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { COUNTRIES } from '@/utils/constants';
+import { FiUpload, FiX, FiCheck, FiInfo, FiCamera } from 'react-icons/fi';
+import { documentService } from '@/services/document.service';
+import toast from 'react-hot-toast';
 
 interface PersonalInfoStepProps {
   data: Partial<StudentProfile>;
-  onNext: (data: { personalInfo: StudentProfile['personalInfo'] }) => void;
+  onNext: (data: { personalDetails: StudentProfile['personalInfo'] }) => void;
   onPrevious: () => void;
   isSaving?: boolean;
 }
+
+type ExtendedPersonalInfo = StudentProfile['personalInfo'] & {
+  profilePicture?: string;
+  religion?: string;
+  sect?: string;
+  ethnicity?: string;
+  socialLinks?: {
+    linkedin?: string;
+    facebook?: string;
+    instagram?: string;
+  };
+};
 
 export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   data,
   onNext,
   isSaving,
 }) => {
+  const [uploadingFiles, setUploadingFiles] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: string }>(
+    {}
+  );
+  const [profilePicturePreview, setProfilePicturePreview] = useState<
+    string | null
+  >(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<StudentProfile['personalInfo']>({
+  } = useForm<ExtendedPersonalInfo>({
     defaultValues: data.personalInfo || {
       fullName: { firstName: '', lastName: '' },
       permanentAddress: {},
       emergencyContact: {},
       passportDetails: {},
+      socialLinks: {},
     },
   });
-  console.log(data, 'data.personalInfo');
 
-  const onSubmit = (formData: StudentProfile['personalInfo']) => {
-    console.log('onnext');
-    onNext({ personalInfo: formData });
+  const handleFileUpload = async (
+    file: File,
+    fieldName: string,
+    documentType: string
+  ) => {
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    setUploadingFiles({ ...uploadingFiles, [fieldName]: true });
+
+    try {
+      const response = await documentService.uploadDocument(
+        file,
+        documentType as any,
+        undefined,
+        (progress) => console.log(`${fieldName} upload progress:`, progress)
+      );
+
+      setUploadedFiles({
+        ...uploadedFiles,
+        [fieldName]: response?.document?.id,
+      });
+      toast.success(`${fieldName} uploaded successfully`);
+    } catch (error) {
+      toast.error(`Failed to upload ${fieldName}`);
+    } finally {
+      setUploadingFiles({ ...uploadingFiles, [fieldName]: false });
+    }
+  };
+
+  const handleProfilePictureChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate image type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload file
+    handleFileUpload(file, 'profilePicture', 'photo');
+  };
+
+  const onSubmit = (formData: ExtendedPersonalInfo) => {
+    onNext({
+      personalInfo: {
+        ...formData,
+        uploadedDocuments: uploadedFiles,
+      } as any,
+    });
   };
 
   const pakistanProvinces = [
@@ -56,8 +142,92 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     'Other',
   ];
 
+  const religions = [
+    'Islam',
+    'Christianity',
+    'Hinduism',
+    'Sikhism',
+    'Buddhism',
+    'Other',
+  ];
+
+  const ethnicities = [
+    'Punjabi',
+    'Pashtun',
+    'Sindhi',
+    'Baloch',
+    'Muhajir',
+    'Kashmiri',
+    'Saraiki',
+    'Other',
+  ];
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+      {/* Document Disclaimer */}
+      <div className='bg-amber-50 border border-amber-200 rounded-lg p-4'>
+        <div className='flex'>
+          <FiInfo className='h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0' />
+          <div>
+            <h4 className='text-sm font-medium text-amber-900 mb-1'>
+              Important Document Notice
+            </h4>
+            <p className='text-sm text-amber-700'>
+              Please note that certain documents (educational certificates,
+              transcripts, etc.) require attestation from MOFA (Ministry of
+              Foreign Affairs) for international applications. You can upload
+              documents now or later in the documents section.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Profile Picture */}
+      <div>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+          Profile Picture
+        </h3>
+        <div className='flex items-center space-x-6'>
+          <div className='relative'>
+            {profilePicturePreview ? (
+              <img
+                src={profilePicturePreview}
+                alt='Profile'
+                className='h-24 w-24 rounded-full object-cover'
+              />
+            ) : (
+              <div className='h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center'>
+                <FiCamera className='h-8 w-8 text-gray-400' />
+              </div>
+            )}
+            {uploadingFiles.profilePicture && (
+              <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full'>
+                <LoadingSpinner size='sm' />
+              </div>
+            )}
+          </div>
+          <div>
+            <label
+              htmlFor='profilePicture'
+              className='btn btn-outline cursor-pointer'
+            >
+              <FiUpload className='mr-2' />
+              Upload Photo
+            </label>
+            <input
+              id='profilePicture'
+              type='file'
+              accept='image/*'
+              onChange={handleProfilePictureChange}
+              className='hidden'
+            />
+            <p className='text-sm text-gray-500 mt-2'>
+              JPG, PNG up to 5MB. Passport size photo recommended.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Basic Information */}
       <div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
@@ -161,25 +331,98 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           </div>
 
           <div>
+            <label htmlFor='religion' className='label'>
+              Religion
+            </label>
+            <select
+              {...register('religion' as any)}
+              id='religion'
+              className='input'
+            >
+              <option value=''>Select religion</option>
+              {religions.map((religion) => (
+                <option key={religion} value={religion}>
+                  {religion}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor='sect' className='label'>
+              Sect (if applicable)
+            </label>
+            <input
+              {...register('sect' as any)}
+              type='text'
+              id='sect'
+              className='input'
+              placeholder='e.g., Sunni, Shia, etc.'
+            />
+          </div>
+
+          <div>
+            <label htmlFor='ethnicity' className='label'>
+              Ethnicity
+            </label>
+            <select
+              {...register('ethnicity' as any)}
+              id='ethnicity'
+              className='input'
+            >
+              <option value=''>Select ethnicity</option>
+              {ethnicities.map((ethnicity) => (
+                <option key={ethnicity} value={ethnicity}>
+                  {ethnicity}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
             <label htmlFor='cnicNumber' className='label'>
               CNIC Number <span className='text-red-500'>*</span>
             </label>
-            <input
-              {...register('cnicNumber', {
-                validate: validators.required('CNIC number'),
-                pattern: {
-                  value: /^\d{5}-\d{7}-\d{1}$/,
-                  message: 'Invalid CNIC format (XXXXX-XXXXXXX-X)',
-                },
-              })}
-              type='text'
-              id='cnicNumber'
-              placeholder='XXXXX-XXXXXXX-X'
-              className={`input ${errors.cnicNumber ? 'input-error' : ''}`}
-            />
-            {errors.cnicNumber && (
-              <p className='error-text'>{errors.cnicNumber.message}</p>
-            )}
+            <div className='space-y-2'>
+              <input
+                {...register('cnicNumber', {
+                  validate: validators.required('CNIC number'),
+                  pattern: {
+                    value: /^\d{5}-\d{7}-\d{1}$/,
+                    message: 'Invalid CNIC format (XXXXX-XXXXXXX-X)',
+                  },
+                })}
+                type='text'
+                id='cnicNumber'
+                placeholder='XXXXX-XXXXXXX-X'
+                className={`input ${errors.cnicNumber ? 'input-error' : ''}`}
+              />
+              {errors.cnicNumber && (
+                <p className='error-text'>{errors.cnicNumber.message}</p>
+              )}
+
+              <div className='flex items-center gap-2'>
+                <label
+                  htmlFor='cnicFile'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload CNIC Copy
+                </label>
+                <input
+                  id='cnicFile'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'cnic', 'cnic');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles.cnic && <FiCheck className='text-green-600' />}
+                {uploadingFiles.cnic && <LoadingSpinner size='sm' />}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -216,6 +459,53 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
             {errors.email && (
               <p className='error-text'>{errors.email.message}</p>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Social Links */}
+      <div>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+          Social Media Links (Optional)
+        </h3>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div>
+            <label htmlFor='linkedin' className='label'>
+              LinkedIn
+            </label>
+            <input
+              {...register('socialLinks.linkedin' as any)}
+              type='url'
+              id='linkedin'
+              className='input'
+              placeholder='https://linkedin.com/in/...'
+            />
+          </div>
+
+          <div>
+            <label htmlFor='facebook' className='label'>
+              Facebook
+            </label>
+            <input
+              {...register('socialLinks.facebook' as any)}
+              type='url'
+              id='facebook'
+              className='input'
+              placeholder='https://facebook.com/...'
+            />
+          </div>
+
+          <div>
+            <label htmlFor='instagram' className='label'>
+              Instagram
+            </label>
+            <input
+              {...register('socialLinks.instagram' as any)}
+              type='url'
+              id='instagram'
+              className='input'
+              placeholder='https://instagram.com/...'
+            />
           </div>
         </div>
       </div>
@@ -502,6 +792,34 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 {errors.passportDetails.passportExpiry.message}
               </p>
             )}
+          </div>
+
+          <div className='md:col-span-3'>
+            <div className='flex items-center gap-2'>
+              <label
+                htmlFor='passportFile'
+                className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+              >
+                <FiUpload className='mr-1' />
+                Upload Passport Copy (Optional)
+              </label>
+              <input
+                id='passportFile'
+                type='file'
+                accept='.pdf,.jpg,.jpeg,.png'
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, 'passport', 'passport');
+                }}
+                className='hidden'
+              />
+              {uploadedFiles.passport && <FiCheck className='text-green-600' />}
+              {uploadingFiles.passport && <LoadingSpinner size='sm' />}
+            </div>
+            <p className='text-xs text-gray-500 mt-1'>
+              You can upload your passport copy now or later in the documents
+              section
+            </p>
           </div>
         </div>
       </div>

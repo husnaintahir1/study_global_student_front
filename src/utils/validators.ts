@@ -5,12 +5,20 @@ export const validators = {
     if (!emailRegex.test(value)) return 'Invalid email address';
     return true;
   },
+  range: (min: number, max: number, fieldName: string) => (value: number) => {
+    if (!value && value !== 0) return true;
+    if (value < min) return `${fieldName} must be at least ${min}`;
+    if (value > max) return `${fieldName} must not exceed ${max}`;
+    return true;
+  },
 
   password: (value: string) => {
     if (!value) return 'Password is required';
     if (value.length < 8) return 'Password must be at least 8 characters';
-    if (!/(?=.*[a-z])/.test(value)) return 'Password must contain a lowercase letter';
-    if (!/(?=.*[A-Z])/.test(value)) return 'Password must contain an uppercase letter';
+    if (!/(?=.*[a-z])/.test(value))
+      return 'Password must contain a lowercase letter';
+    if (!/(?=.*[A-Z])/.test(value))
+      return 'Password must contain an uppercase letter';
     if (!/(?=.*\d)/.test(value)) return 'Password must contain a number';
     return true;
   },
@@ -38,13 +46,15 @@ export const validators = {
 
   minLength: (min: number, fieldName: string) => (value: string) => {
     if (!value) return true; // Let required validator handle empty values
-    if (value.length < min) return `${fieldName} must be at least ${min} characters`;
+    if (value.length < min)
+      return `${fieldName} must be at least ${min} characters`;
     return true;
   },
 
   maxLength: (max: number, fieldName: string) => (value: string) => {
     if (!value) return true;
-    if (value.length > max) return `${fieldName} must not exceed ${max} characters`;
+    if (value.length > max)
+      return `${fieldName} must not exceed ${max} characters`;
     return true;
   },
 
@@ -92,7 +102,8 @@ export const validators = {
   fileSize: (maxSizeMB: number) => (file: File) => {
     if (!file) return true;
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    if (file.size > maxSizeBytes) return `File size must not exceed ${maxSizeMB}MB`;
+    if (file.size > maxSizeBytes)
+      return `File size must not exceed ${maxSizeMB}MB`;
     return true;
   },
 

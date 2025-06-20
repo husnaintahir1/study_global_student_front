@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { StudentProfile } from '@/types';
 import { validators } from '@/utils/validators';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { FiInfo, FiAlertCircle } from 'react-icons/fi';
+import { FiInfo, FiAlertCircle, FiUpload, FiCheck } from 'react-icons/fi';
+import { documentService } from '@/services/document.service';
+import toast from 'react-hot-toast';
 
 interface FinancialInfoStepProps {
   data: Partial<StudentProfile>;
@@ -12,6 +14,15 @@ interface FinancialInfoStepProps {
   isLastStep: boolean;
   isSaving?: boolean;
 }
+
+type ExtendedFinancialInfo = StudentProfile['financialInfo'] & {
+  bankStatementDocId?: string;
+  financialAffidavitDocId?: string;
+  policeClearanceDocId?: string;
+  medicalClearanceDocId?: string;
+  domicileCertificateDocId?: string;
+  nocDocId?: string;
+};
 
 export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
   data,
@@ -24,31 +35,127 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<StudentProfile['financialInfo']>({
-    defaultValues: data.financialInfo || {
-      bankStatementsSubmitted: false,
-      financialAffidavit: false,
-      visaRejections: false,
-      policeClearanceCertificate: false,
-      medicalClearance: false,
-      domicileCertificateSubmitted: false,
-      nocRequired: false,
+  } = useForm<ExtendedFinancialInfo>({
+    defaultValues: {
+      ...data.financialInfo,
+      bankStatementsSubmitted:
+        data.financialInfo?.bankStatementsSubmitted || false,
+      financialAffidavit: data.financialInfo?.financialAffidavit || false,
+      visaRejections: data.financialInfo?.visaRejections || false,
+      policeClearanceCertificate:
+        data.financialInfo?.policeClearanceCertificate || false,
+      medicalClearance: data.financialInfo?.medicalClearance || false,
+      domicileCertificateSubmitted:
+        data.financialInfo?.domicileCertificateSubmitted || false,
+      nocRequired: data.financialInfo?.nocRequired || false,
     },
   });
+
+  const [uploadingFiles, setUploadingFiles] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   const fundingSource = watch('fundingSource');
   const visaRejections = watch('visaRejections');
   const medicalClearance = watch('medicalClearance');
+  const bankStatementsSubmitted = watch('bankStatementsSubmitted');
+  const financialAffidavit = watch('financialAffidavit');
+  const policeClearanceCertificate = watch('policeClearanceCertificate');
+  const domicileCertificateSubmitted = watch('domicileCertificateSubmitted');
+  const nocRequired = watch('nocRequired');
 
-  const onSubmit = (formData: StudentProfile['financialInfo']) => {
-    // Clean up sponsor details if funding source is not sponsor-based
-    const cleanedData = { ...formData };
+  const handleFileUpload = async (file: File, docType: string) => {
+    if (!file) return;
+
+    const fileValidation = validators.fileSize(10)(file);
+    if (fileValidation !== true) {
+      toast.error(fileValidation);
+      return;
+    }
+
+    const fileTypeValidation = validators.fileType([
+      '.pdf',
+      '.jpg',
+      '.jpeg',
+      '.png',
+    ])(file);
+    if (fileTypeValidation !== true) {
+      toast.error(fileTypeValidation);
+      return;
+    }
+
+    setUploadingFiles((prev) => ({ ...prev, [docType]: true }));
+
+    try {
+      const response = await documentService.uploadDocument(
+        file,
+        'other',
+        undefined,
+        (progress) => console.log(`${docType} upload progress:`, progress)
+      );
+
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [docType]: response?.document?.id,
+      }));
+      setValue(docType as keyof ExtendedFinancialInfo, response?.document?.id);
+      toast.success(
+        `${docType
+          .replace('DocId', '')
+          .replace(/([A-Z])/g, ' $1')
+          .trim()} uploaded successfully`
+      );
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error(
+        `Failed to upload ${docType
+          .replace('DocId', '')
+          .replace(/([A-Z])/g, ' $1')
+          .trim()}`
+      );
+    } finally {
+      setUploadingFiles((prev) => ({ ...prev, [docType]: false }));
+    }
+  };
+
+  const onSubmit = (formData: ExtendedFinancialInfo) => {
+    const cleanedData: StudentProfile['financialInfo'] = {
+      ...formData,
+    };
+
     if (
       fundingSource !== 'Family Sponsor' &&
       fundingSource !== 'Third Party Sponsor'
     ) {
       delete cleanedData.sponsorDetails;
+    }
+
+    // Include document IDs if uploaded
+    if (uploadedFiles['bankStatementDocId']) {
+      cleanedData.bankStatementDocId = uploadedFiles['bankStatementDocId'];
+    }
+    if (uploadedFiles['financialAffidavitDocId']) {
+      cleanedData.financialAffidavitDocId =
+        uploadedFiles['financialAffidavitDocId'];
+    }
+    if (uploadedFiles['policeClearanceDocId']) {
+      cleanedData.policeClearanceDocId = uploadedFiles['policeClearanceDocId'];
+    }
+    if (uploadedFiles['medicalClearanceDocId']) {
+      cleanedData.medicalClearanceDocId =
+        uploadedFiles['medicalClearanceDocId'];
+    }
+    if (uploadedFiles['domicileCertificateDocId']) {
+      cleanedData.domicileCertificateDocId =
+        uploadedFiles['domicileCertificateDocId'];
+    }
+    if (uploadedFiles['nocDocId']) {
+      cleanedData.nocDocId = uploadedFiles['nocDocId'];
     }
 
     onNext({ financialInfo: cleanedData });
@@ -97,13 +204,11 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
-      {/* Financial Information */}
+    <div className='space-y-8'>
       <div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
           Financial Information
         </h3>
-
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
             <label htmlFor='fundingSource' className='label'>
@@ -155,7 +260,6 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       </div>
 
-      {/* Sponsor Details - Conditional */}
       {(fundingSource === 'Family Sponsor' ||
         fundingSource === 'Third Party Sponsor') && (
         <div>
@@ -169,17 +273,14 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               </label>
               <input
                 {...register('sponsorDetails.sponsorName', {
-                  validate:
-                    fundingSource === 'Family Sponsor' ||
-                    fundingSource === 'Third Party Sponsor'
-                      ? validators.required('Sponsor name')
-                      : undefined,
+                  validate: validators.required('Sponsor name'),
                 })}
                 type='text'
                 id='sponsorName'
                 className={`input ${
                   errors.sponsorDetails?.sponsorName ? 'input-error' : ''
                 }`}
+                placeholder='Full name'
               />
               {errors.sponsorDetails?.sponsorName && (
                 <p className='error-text'>
@@ -195,11 +296,7 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               </label>
               <select
                 {...register('sponsorDetails.sponsorRelation', {
-                  validate:
-                    fundingSource === 'Family Sponsor' ||
-                    fundingSource === 'Third Party Sponsor'
-                      ? validators.required('Sponsor relation')
-                      : undefined,
+                  validate: validators.required('Sponsor relation'),
                 })}
                 id='sponsorRelation'
                 className={`input ${
@@ -226,11 +323,7 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               </label>
               <input
                 {...register('sponsorDetails.sponsorCnic', {
-                  validate:
-                    fundingSource === 'Family Sponsor' ||
-                    fundingSource === 'Third Party Sponsor'
-                      ? validators.required('Sponsor CNIC')
-                      : undefined,
+                  validate: validators.required('Sponsor CNIC'),
                 })}
                 type='text'
                 id='sponsorCnic'
@@ -252,11 +345,7 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               </label>
               <input
                 {...register('sponsorDetails.sponsorAnnualIncome', {
-                  validate:
-                    fundingSource === 'Family Sponsor' ||
-                    fundingSource === 'Third Party Sponsor'
-                      ? validators.required('Sponsor income')
-                      : undefined,
+                  validate: validators.required('Sponsor income'),
                 })}
                 type='text'
                 id='sponsorIncome'
@@ -277,12 +366,11 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       )}
 
-      {/* Financial Documents */}
       <div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
           Financial Documents
         </h3>
-        <div className='space-y-3'>
+        <div className='space-y-4'>
           <div className='flex items-center space-x-2'>
             <input
               {...register('bankStatementsSubmitted')}
@@ -297,6 +385,39 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               Bank statements for last 6 months available
             </label>
           </div>
+          {bankStatementsSubmitted && (
+            <div className='ml-6 space-y-2'>
+              <div className='flex items-center gap-4'>
+                <label
+                  htmlFor='bankStatementDoc'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload Bank Statements
+                </label>
+                <input
+                  id='bankStatementDoc'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'bankStatementDocId');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles['bankStatementDocId'] && (
+                  <FiCheck className='text-green-600' />
+                )}
+                {uploadingFiles['bankStatementDocId'] && (
+                  <LoadingSpinner size='sm' />
+                )}
+              </div>
+              <p className='text-xs text-gray-500'>
+                Upload bank statements for last 6 months (PDF, JPG, PNG - Max
+                10MB)
+              </p>
+            </div>
+          )}
 
           <div className='flex items-center space-x-2'>
             <input
@@ -312,10 +433,42 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               Financial affidavit/sponsorship letter available
             </label>
           </div>
+          {financialAffidavit && (
+            <div className='ml-6 space-y-2'>
+              <div className='flex items-center gap-4'>
+                <label
+                  htmlFor='financialAffidavitDoc'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload Financial Affidavit
+                </label>
+                <input
+                  id='financialAffidavitDoc'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'financialAffidavitDocId');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles['financialAffidavitDocId'] && (
+                  <FiCheck className='text-green-600' />
+                )}
+                {uploadingFiles['financialAffidavitDocId'] && (
+                  <LoadingSpinner size='sm' />
+                )}
+              </div>
+              <p className='text-xs text-gray-500'>
+                Upload financial affidavit/sponsorship letter (PDF, JPG, PNG -
+                Max 10MB)
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Visa & Travel History */}
       <div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
           Visa & Travel History
@@ -336,7 +489,6 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 I have previous visa rejections
               </label>
             </div>
-
             {visaRejections && (
               <div className='ml-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
                 <div className='flex'>
@@ -377,12 +529,11 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       </div>
 
-      {/* Legal & Medical Documents */}
       <div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>
           Legal & Medical Documents
         </h3>
-        <div className='space-y-3'>
+        <div className='space-y-4'>
           <div className='flex items-center space-x-2'>
             <input
               {...register('policeClearanceCertificate')}
@@ -397,6 +548,38 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               Police clearance certificate available
             </label>
           </div>
+          {policeClearanceCertificate && (
+            <div className='ml-6 space-y-2'>
+              <div className='flex items-center gap-4'>
+                <label
+                  htmlFor='policeClearanceDoc'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload Police Clearance Certificate
+                </label>
+                <input
+                  id='policeClearanceDoc'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'policeClearanceDocId');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles['policeClearanceDocId'] && (
+                  <FiCheck className='text-green-600' />
+                )}
+                {uploadingFiles['policeClearanceDocId'] && (
+                  <LoadingSpinner size='sm' />
+                )}
+              </div>
+              <p className='text-xs text-gray-500'>
+                Upload police clearance certificate (PDF, JPG, PNG - Max 10MB)
+              </p>
+            </div>
+          )}
 
           <div className='flex items-center space-x-2'>
             <input
@@ -412,19 +595,51 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               Medical examination completed
             </label>
           </div>
-
           {medicalClearance && (
-            <div className='ml-6'>
-              <label htmlFor='medicalConditions' className='label'>
-                Medical Conditions (if any)
-              </label>
-              <textarea
-                {...register('medicalConditions')}
-                id='medicalConditions'
-                rows={2}
-                className='input'
-                placeholder='Please mention any medical conditions that might affect your studies...'
-              />
+            <div className='ml-6 space-y-2'>
+              <div>
+                <label htmlFor='medicalConditions' className='label'>
+                  Medical Conditions (if any)
+                </label>
+                <textarea
+                  {...register('medicalConditions')}
+                  id='medicalConditions'
+                  rows={2}
+                  className='input'
+                  placeholder='Please mention any medical conditions that might affect your studies...'
+                />
+              </div>
+              <div className='space-y-2'>
+                <div className='flex items-center gap-4'>
+                  <label
+                    htmlFor='medicalClearanceDoc'
+                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  >
+                    <FiUpload className='mr-1' />
+                    Upload Medical Clearance Certificate
+                  </label>
+                  <input
+                    id='medicalClearanceDoc'
+                    type='file'
+                    accept='.pdf,.jpg,.jpeg,.png'
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload(file, 'medicalClearanceDocId');
+                    }}
+                    className='hidden'
+                  />
+                  {uploadedFiles['medicalClearanceDocId'] && (
+                    <FiCheck className='text-green-600' />
+                  )}
+                  {uploadingFiles['medicalClearanceDocId'] && (
+                    <LoadingSpinner size='sm' />
+                  )}
+                </div>
+                <p className='text-xs text-gray-500'>
+                  Upload medical clearance certificate (PDF, JPG, PNG - Max
+                  10MB)
+                </p>
+              </div>
             </div>
           )}
 
@@ -442,6 +657,39 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               Domicile certificate available
             </label>
           </div>
+          {domicileCertificateSubmitted && (
+            <div className='ml-6 space-y-2'>
+              <div className='flex items-center gap-4'>
+                <label
+                  htmlFor='domicileCertificateDoc'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload Domicile Certificate
+                </label>
+                <input
+                  id='domicileCertificateDoc'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file)
+                      handleFileUpload(file, 'domicileCertificateDocId');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles['domicileCertificateDocId'] && (
+                  <FiCheck className='text-green-600' />
+                )}
+                {uploadingFiles['domicileCertificateDocId'] && (
+                  <LoadingSpinner size='sm' />
+                )}
+              </div>
+              <p className='text-xs text-gray-500'>
+                Upload domicile certificate (PDF, JPG, PNG - Max 10MB)
+              </p>
+            </div>
+          )}
 
           <div className='flex items-center space-x-2'>
             <input
@@ -454,10 +702,39 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               NOC required from current employer/institution
             </label>
           </div>
+          {nocRequired && (
+            <div className='ml-6 space-y-2'>
+              <div className='flex items-center gap-4'>
+                <label
+                  htmlFor='nocDoc'
+                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                >
+                  <FiUpload className='mr-1' />
+                  Upload No Objection Certificate
+                </label>
+                <input
+                  id='nocDoc'
+                  type='file'
+                  accept='.pdf,.jpg,.jpeg,.png'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'nocDocId');
+                  }}
+                  className='hidden'
+                />
+                {uploadedFiles['nocDocId'] && (
+                  <FiCheck className='text-green-600' />
+                )}
+                {uploadingFiles['nocDocId'] && <LoadingSpinner size='sm' />}
+              </div>
+              <p className='text-xs text-gray-500'>
+                Upload NOC from employer/institution (PDF, JPG, PNG - Max 10MB)
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Additional Information */}
       <div>
         <label htmlFor='additionalInfo' className='label'>
           Additional Information
@@ -475,18 +752,19 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </p>
       </div>
 
-      {/* Privacy Notice */}
       <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
         <div className='flex'>
           <FiInfo className='h-5 w-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0' />
           <div>
             <h4 className='text-sm font-medium text-blue-900 mb-1'>
-              Privacy & Confidentiality
+              Document Requirements & Privacy
             </h4>
             <p className='text-sm text-blue-700'>
-              All financial and personal information provided is kept strictly
-              confidential and will only be used for your study abroad
-              application process. We comply with all data protection
+              All uploaded documents must be clear, legible, and in PDF, JPG, or
+              PNG format (max 10MB). Documents in languages other than English
+              require certified translations. All financial and personal
+              information is kept strictly confidential and used solely for your
+              study abroad application, in compliance with data protection
               regulations.
             </p>
           </div>
@@ -498,7 +776,8 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
           Previous
         </button>
         <button
-          type='submit'
+          type='button'
+          onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting || isSaving}
           className='btn btn-primary flex items-center'
         >
@@ -511,6 +790,6 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
           )}
         </button>
       </div>
-    </form>
+    </div>
   );
 };
