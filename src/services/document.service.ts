@@ -6,6 +6,11 @@ export interface DocumentUploadResponse {
   message: string;
 }
 
+export interface ProfilePictureUploadResponse {
+  fileUrl: string;
+  message: string;
+}
+
 export interface DocumentStatusSummary {
   total: number;
   pending: number;
@@ -38,6 +43,20 @@ class DocumentService {
 
     return api.upload<DocumentUploadResponse>(
       '/student/reviews/documents',
+      formData,
+      onProgress
+    );
+  }
+
+  async uploadProfilePicture(
+    file: File,
+    onProgress?: (progress: number) => void
+  ): Promise<ProfilePictureUploadResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return api.upload<ProfilePictureUploadResponse>(
+      '/file/upload',
       formData,
       onProgress
     );

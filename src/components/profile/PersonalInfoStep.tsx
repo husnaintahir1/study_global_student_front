@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { StudentProfile } from '@/types';
 import { validators } from '@/utils/validators';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { COUNTRIES } from '@/utils/constants';
+import { API_BASE_URL, COUNTRIES } from '@/utils/constants';
 import { FiUpload, FiX, FiCheck, FiInfo, FiCamera } from 'react-icons/fi';
 import { documentService } from '@/services/document.service';
 import toast from 'react-hot-toast';
@@ -37,14 +37,19 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: string }>(
     {}
   );
+  console.log(data, 'data in personal info step');
   const [profilePicturePreview, setProfilePicturePreview] = useState<
     string | null
-  >(null);
+  >(
+    API_BASE_URL.replace('/api/v1', '') + data.personalInfo?.profilePicture ||
+      null
+  );
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm<ExtendedPersonalInfo>({
     defaultValues: data.personalInfo || {
       fullName: { firstName: '', lastName: '' },
@@ -52,6 +57,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       emergencyContact: {},
       passportDetails: {},
       socialLinks: {},
+      profilePicture: '',
     },
   });
 
@@ -70,18 +76,29 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     setUploadingFiles({ ...uploadingFiles, [fieldName]: true });
 
     try {
-      const response = await documentService.uploadDocument(
-        file,
-        documentType as any,
-        undefined,
-        (progress) => console.log(`${fieldName} upload progress:`, progress)
-      );
+      if (fieldName === 'profilePicture') {
+        // Use /upload API for profile picture
+        const response = await documentService.uploadProfilePicture(file);
+        setValue('profilePicture', response?.fileUrl);
+        setProfilePicturePreview(
+          API_BASE_URL.replace('/api/v1', '') + response?.fileUrl
+        );
+        toast.success('Profile picture uploaded successfully');
+      } else {
+        // Use /document API for other documents
+        const response = await documentService.uploadDocument(
+          file,
+          documentType as any,
+          undefined,
+          (progress) => console.log(`${fieldName} upload progress:`, progress)
+        );
 
-      setUploadedFiles({
-        ...uploadedFiles,
-        [fieldName]: response?.document?.id,
-      });
-      toast.success(`${fieldName} uploaded successfully`);
+        setUploadedFiles({
+          ...uploadedFiles,
+          [fieldName]: response?.document?.id,
+        });
+        toast.success(`${fieldName} uploaded successfully`);
+      }
     } catch (error) {
       toast.error(`Failed to upload ${fieldName}`);
     } finally {
@@ -108,7 +125,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     };
     reader.readAsDataURL(file);
 
-    // Upload file
+    // Upload file to /upload API
     handleFileUpload(file, 'profilePicture', 'photo');
   };
 
@@ -117,6 +134,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       personalInfo: {
         ...formData,
         uploadedDocuments: uploadedFiles,
+        profilePicture: formData.profilePicture,
       } as any,
     });
   };

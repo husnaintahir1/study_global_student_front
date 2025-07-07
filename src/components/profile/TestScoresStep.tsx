@@ -120,8 +120,67 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<ExtendedTestScores>({
-    defaultValues: data.testScores || {
-      partTimeWork: false,
+    defaultValues: {
+      ...data.testScores,
+      ieltsScores: data.testScores?.ieltsScores || {
+        listening: undefined,
+        reading: undefined,
+        writing: undefined,
+        speaking: undefined,
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      toeflScore: data.testScores?.toeflScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      satScore: data.testScores?.satScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      actScore: data.testScores?.actScore || {
+        composite: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      greScore: data.testScores?.greScore || {
+        verbal: undefined,
+        quantitative: undefined,
+        analytical: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      gmatScore: data.testScores?.gmatScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      neetScore: data.testScores?.neetScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      pteScore: data.testScores?.pteScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      duolingoScore: data.testScores?.duolingoScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      mcatScore: data.testScores?.mcatScore || {
+        total: undefined,
+        testDate: '',
+        documentId: undefined,
+      },
+      partTimeWork: data.testScores?.partTimeWork || false,
+      backlogs: data.testScores?.backlogs,
+      workExperience: data.testScores?.workExperience,
     },
   });
 
@@ -147,7 +206,12 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         ...prev,
         [testType]: response?.document?.id,
       }));
-      setValue(`${testType}Score.documentId` as any, response?.document?.id);
+      setValue(
+        testType === 'ielts'
+          ? 'ieltsScores.documentId'
+          : `${testType}Score.documentId`,
+        response?.document?.id
+      );
 
       toast.success(
         `${testType.toUpperCase()} certificate uploaded successfully`
@@ -167,7 +231,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
     };
 
     selectedTests.forEach((test) => {
-      if (formData[`${test}Score`]) {
+      if (test === 'ielts' && formData.ieltsScores) {
+        cleanedData.ieltsScores = formData.ieltsScores;
+      } else if (formData[`${test}Score`]) {
         cleanedData[`${test}Score`] = formData[`${test}Score`];
       }
     });
@@ -188,6 +254,10 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
       delete newFiles[test];
       return newFiles;
     });
+    setValue(
+      test === 'ielts' ? 'ieltsScores' : `${test}Score`,
+      undefined as any
+    );
   };
 
   const testOptions: {

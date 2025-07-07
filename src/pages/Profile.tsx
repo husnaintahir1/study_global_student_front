@@ -42,6 +42,7 @@ import toast from 'react-hot-toast';
 
 // Import the ProfileBuilder component for editing
 import { ProfileBuilder } from '@/components/profile/ProfileBuilder';
+import { API_BASE_URL } from '@/utils/constants';
 
 export const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -361,7 +362,10 @@ export const Profile = () => {
                   <div className='relative inline-block mb-4'>
                     {profile.personalInfo?.profilePicture ? (
                       <img
-                        src={profile.personalInfo.profilePicture}
+                        src={
+                          API_BASE_URL.replace('/api/v1', '') +
+                          profile.personalInfo.profilePicture
+                        }
                         alt='Profile'
                         className='h-24 w-24 rounded-full object-cover border-4 border-white/20'
                       />
