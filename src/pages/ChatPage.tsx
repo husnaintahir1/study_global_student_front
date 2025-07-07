@@ -11,12 +11,21 @@ import {
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '@/context/AuthContext';
 
+// Add type declaration for import.meta.env
+declare global {
+  interface ImportMeta {
+    readonly env: {
+      readonly VITE_API_URL: string;
+    };
+  }
+}
+
 // Types
 interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'student' | 'consultant' | 'manager' | 'super_admin' | 'receptionist';
 }
 
 interface Message {
@@ -48,7 +57,7 @@ interface Recipient {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'student' | 'consultant' | 'manager' | 'super_admin' | 'receptionist';
 }
 
 interface RecipientConversation {
@@ -68,11 +77,13 @@ class ChatApiService {
   private token: string;
 
   constructor(baseUrl: string, token: string) {
+    const mytoken = localStorage.getItem('student_auth_token');
     this.baseUrl = baseUrl;
-    this.token = token;
+    this.token = mytoken || token || '';
   }
 
   private async request(endpoint: string, options: RequestInit = {}) {
+    console.log(this.baseUrl, this.token, "ascasncjasncasascsc");
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers: {
@@ -90,7 +101,7 @@ class ChatApiService {
   }
 
   async getMessages(recipientId: string) {
-    return this.request(`/messages/${recipientId}`);
+    return this.request(`/messages?recipientId=${recipientId}`);
   }
 
   async sendMessage(messageData: any) {
@@ -101,11 +112,11 @@ class ChatApiService {
   }
 
   async getConversations() {
-    return this.request('/conversations');
+    return this.request('/messages');
   }
 
   async getAllowedRecipients() {
-    return this.request('/messages/recipients');
+    return this.request('/messages/users/allowed-recipients');
   }
 
   async getUnreadMessageCount() {
@@ -114,7 +125,7 @@ class ChatApiService {
 
   async markConversationMessagesAsRead(conversationHash: string) {
     return this.request(`/messages/conversation/${conversationHash}/read`, {
-      method: 'PATCH',
+      method: 'PUT',
     });
   }
 
@@ -209,7 +220,7 @@ const StandaloneChat: React.FC<ChatProps> = (
 
   const apiBaseUrl = import.meta.env.VITE_API_URL;
   const socketUrl = import.meta.env.VITE_API_URL.replace('/api/v1', '');
-  const authToken = localStorage.getItem('token');
+  const authToken = localStorage.getItem('student_auth_token') || '';
 
   // State
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -225,6 +236,7 @@ const StandaloneChat: React.FC<ChatProps> = (
   const [file, setFile] = useState<File | null>(null);
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -251,10 +263,10 @@ const StandaloneChat: React.FC<ChatProps> = (
     const loadInitialData = async () => {
       try {
         // Load conversations if super_admin
-        if (true) {
-          const conversationsRes = await apiService.current.getConversations();
-          setConversations(conversationsRes.data || []);
-        }
+        // if (true) {
+        //   const conversationsRes = await apiService.current.getConversations();
+        //   setConversations(conversationsRes.data || []);
+        // }
 
         // Load allowed recipients
         const recipientsRes = await apiService.current.getAllowedRecipients();
@@ -282,6 +294,8 @@ const StandaloneChat: React.FC<ChatProps> = (
 
   // Socket event listeners
   useEffect(() => {
+    if (!user?.id) return;
+
     const handleNewMessage = (newMessage: Message) => {
       if (
         newMessage.senderId === user.id ||
@@ -312,6 +326,7 @@ const StandaloneChat: React.FC<ChatProps> = (
               newMessage.senderId === currentRecipientId)
           ) {
             setMessages((prev) => {
+              // Check if message already exists by ID to prevent duplicates
               if (prev.some((msg) => msg.id === newMessage.id)) return prev;
               return [...prev, newMessage];
             });
@@ -325,12 +340,12 @@ const StandaloneChat: React.FC<ChatProps> = (
     return () => {
       socketService.current.cleanup();
     };
-  }, [user.id, selectedConversation]);
+  }, [user?.id, selectedConversation]);
 
   // Load messages when conversation changes
   useEffect(() => {
     const loadMessages = async () => {
-      if (!selectedConversation) return;
+      if (!selectedConversation || !user?.id) return;
 
       setIsLoading(true);
       try {
@@ -355,7 +370,7 @@ const StandaloneChat: React.FC<ChatProps> = (
     };
 
     loadMessages();
-  }, [selectedConversation, user.id]);
+  }, [selectedConversation, user?.id]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -364,7 +379,7 @@ const StandaloneChat: React.FC<ChatProps> = (
 
   // Mark conversation as read
   useEffect(() => {
-    if (selectedConversation?.type !== 'recipient') return;
+    if (selectedConversation?.type !== 'recipient' || !user?.id) return;
 
     const conversationHash = [selectedConversation.id, user.id]
       .sort()
@@ -384,10 +399,12 @@ const StandaloneChat: React.FC<ChatProps> = (
     markAsRead();
     const interval = setInterval(markAsRead, 30000);
     return () => clearInterval(interval);
-  }, [selectedConversation, user.id]);
+  }, [selectedConversation, user?.id]);
 
   // Handlers
   const handleSelectConversation = async (item: ConversationItem) => {
+    if (!user?.id) return;
+
     setSelectedConversation(item);
     setMessages([]);
 
@@ -407,7 +424,7 @@ const StandaloneChat: React.FC<ChatProps> = (
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedConversation || (!messageInput.trim() && !file)) return;
+    if (!selectedConversation || (!messageInput.trim() && !file) || !user?.id) return;
 
     const recipientId =
       selectedConversation.type === 'conversation'
@@ -434,7 +451,12 @@ const StandaloneChat: React.FC<ChatProps> = (
       };
 
       const response = await apiService.current.sendMessage(messageData);
-      setMessages((prev) => [...prev, response.data]);
+      // Add message optimistically for immediate UI feedback
+      // The socket will emit the same message, but our duplicate check will prevent it from being added twice
+      setMessages((prev) => {
+        if (prev.some((msg) => msg.id === response.data.id)) return prev;
+        return [...prev, response.data];
+      });
       setMessageInput('');
       setFile(null);
       setReplyToMessage(null);
@@ -454,11 +476,11 @@ const StandaloneChat: React.FC<ChatProps> = (
     ...allowedRecipients
       .filter(
         (recipient) =>
-          recipient.id !== user.id &&
+          recipient.id !== user?.id &&
           !conversations.some(
             (conv) =>
               conv.conversationHash.includes(recipient.id) &&
-              conv.conversationHash.includes(user.id)
+              conv.conversationHash.includes(user?.id || '')
           )
       )
       .map((recipient) => ({
@@ -503,6 +525,8 @@ const StandaloneChat: React.FC<ChatProps> = (
   };
 
   const isLeftAligned = (msg: Message): boolean => {
+    if (!user?.id) return false;
+    
     if (selectedConversation?.type === 'conversation') {
       if (user.role === 'super_admin') {
         return msg.sender?.role === 'student';
@@ -524,7 +548,8 @@ const StandaloneChat: React.FC<ChatProps> = (
   };
 
   const getStaticFileUrl = (filePath: string): string => {
-    return `${apiBaseUrl}/uploads/${filePath}`;
+    const mainUrl = apiBaseUrl.replace("/api/v1", "");
+    return `${mainUrl}${filePath}`;
   };
 
   const renderMessageContent = (msg: Message): JSX.Element => {
@@ -541,7 +566,7 @@ const StandaloneChat: React.FC<ChatProps> = (
             <a
               href={getStaticFileUrl(msg.fileUrl)}
               download={msg.fileName}
-              className='text-gray-200 hover:text-gray-300 underline flex items-center gap-1 text-sm transition-colors'
+              className='text-gray-500 hover:text-gray-300 underline flex items-center gap-1 text-sm transition-colors'
             >
               <Paperclip className='w-4 h-4' />
               Download {msg.fileName} ({((msg.fileSize || 0) / 1024).toFixed(2)}{' '}
@@ -567,8 +592,21 @@ const StandaloneChat: React.FC<ChatProps> = (
   };
 
   const canSendMessage = (): boolean => {
+    if (!user?.role) return false;
     return ['manager', 'consultant', 'super_admin'].includes(user.role);
   };
+
+  // Early return if user is not available
+  if (!user) {
+    return (
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-center'>
+          <Loader className='w-8 h-8 animate-spin mx-auto mb-4' />
+          <p className='text-gray-600'>Loading user data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -579,15 +617,6 @@ const StandaloneChat: React.FC<ChatProps> = (
       </div>
 
       <div className='relative max-w-7xl mx-auto px-6 py-8'>
-        <div className='mb-8'>
-          <h1 className='text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
-            Messages
-          </h1>
-          <p className='text-lg text-gray-600 max-w-2xl mt-2'>
-            Connect with your consultants and team members
-          </p>
-        </div>
-
         <div className='bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden'>
           <div className='flex h-[calc(100vh-12rem)]'>
             {/* Conversation List */}
@@ -801,7 +830,7 @@ const StandaloneChat: React.FC<ChatProps> = (
               )}
 
               {/* Message Input */}
-              {selectedConversation && canSendMessage() && (
+              {selectedConversation && (
                 <div className='p-6 border-t border-gray-200/50 bg-white/80 backdrop-blur-sm rounded-br-2xl'>
                   <form
                     onSubmit={handleSendMessage}
