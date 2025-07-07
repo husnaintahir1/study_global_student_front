@@ -4,12 +4,11 @@ import { PersonalInfoStep } from './PersonalInfoStep';
 import { AcademicBackgroundStep } from './AcademicBackgroundStep';
 import { TestScoresStep } from './TestScoresStep';
 import { PreferencesStep } from './PreferencesStep';
-// import { FinancialDocumentationStep } from './FinancialDocumentationStep';
+import { FinancialInfoStep } from './FinancialInfoStep';
 import { StudentProfile } from '@/types';
 import { profileService } from '@/services/profile.service';
 import { cn } from '@/utils/helpers';
 import toast from 'react-hot-toast';
-import { FinancialInfoStep } from './FinancialInfoStep';
 import { useAuth } from '@/hooks/useAuth';
 
 interface ProfileBuilderProps {
@@ -60,6 +59,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [savingStep, setSavingStep] = useState(false);
   const { user, updateUser } = useAuth();
+
   useEffect(() => {
     // Check which steps are already completed based on initial data
     const completed = new Set<number>();
@@ -140,55 +140,59 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({
   };
 
   const isLastStep = currentStep === steps.length - 1;
-  const canComplete = completedSteps.size === steps.length;
   const stepProgress = Math.round((completedSteps.size / steps.length) * 100);
 
   return (
-    <div className='max-w-5xl mx-auto'>
+    <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
       {/* Overall Progress */}
-      <div className='mb-6'>
-        <div className='flex justify-between items-center mb-2'>
-          <h3 className='text-sm font-medium text-gray-700'>
+      {/* <div className='mb-8'>
+        <div className='flex justify-between items-center mb-3'>
+          <h3 className='text-lg font-semibold text-gray-900'>
             Profile Completion
           </h3>
-          <span className='text-sm font-medium text-gray-900'>
+          <span className='text-lg font-semibold text-blue-600'>
             {stepProgress}%
           </span>
         </div>
-        <div className='w-full bg-gray-200 rounded-full h-2'>
+        <div className='w-full bg-gray-200/50 backdrop-blur-sm rounded-full h-3'>
           <div
-            className='bg-primary-600 h-2 rounded-full transition-all duration-500'
+            className='bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500'
             style={{ width: `${stepProgress}%` }}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Progress Steps */}
-      <div className='mb-8'>
-        <div className='flex items-center justify-between'>
+      <div className='mb-10 bg-gradient-to-r mt-10 from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <div className='flex items-center justify-between flex-wrap gap-4'>
           {steps.map((step, index) => (
             <React.Fragment key={step.id}>
-              <button
-                onClick={() => handleStepClick(index)}
-                className={cn(
-                  'flex items-center justify-center w-12 h-12 rounded-full font-medium transition-all',
-                  currentStep === index
-                    ? 'bg-primary-600 text-white ring-4 ring-primary-200'
-                    : completedSteps.has(index)
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                )}
-              >
-                {completedSteps.has(index) ? (
-                  <FiCheck className='h-5 w-5' />
-                ) : (
-                  index + 1
-                )}
-              </button>
+              <div className='flex flex-col items-center'>
+                <button
+                  onClick={() => handleStepClick(index)}
+                  className={cn(
+                    'flex items-center justify-center w-12 h-12 rounded-full font-semibold text-lg transition-all duration-300',
+                    currentStep === index
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white ring-4 ring-blue-200/50'
+                      : completedSteps.has(index)
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  )}
+                >
+                  {completedSteps.has(index) ? (
+                    <FiCheck className='h-6 w-6' />
+                  ) : (
+                    index + 1
+                  )}
+                </button>
+                <span className='mt-2 text-xs font-medium text-gray-600 text-center'>
+                  {step.title}
+                </span>
+              </div>
               {index < steps.length - 1 && (
                 <div
                   className={cn(
-                    'flex-1 h-1 mx-2 transition-colors',
+                    'flex-1 h-1 mx-2 transition-colors duration-300',
                     completedSteps.has(index) ? 'bg-green-600' : 'bg-gray-200'
                   )}
                 />
@@ -196,15 +200,15 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({
             </React.Fragment>
           ))}
         </div>
-        <div className='mt-4 text-center'>
-          <h2 className='text-xl font-bold text-gray-900'>
+        <div className='mt-6 text-center'>
+          <h2 className='text-2xl font-bold text-gray-900'>
             {steps[currentStep].title}
           </h2>
           <p className='text-sm text-gray-600 mt-1'>
             Step {currentStep + 1} of {steps.length}
             {savingStep && (
               <span className='ml-2 inline-flex items-center'>
-                <FiLoader className='animate-spin h-4 w-4 mr-1' />
+                <FiLoader className='animate-spin h-5 w-5 text-blue-600 mr-1' />
                 Saving...
               </span>
             )}
@@ -213,7 +217,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({
       </div>
 
       {/* Step Content */}
-      <div className='card'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-all duration-300'>
         <CurrentStepComponent
           data={profileData}
           onNext={handleStepComplete}
@@ -224,7 +228,7 @@ export const ProfileBuilder: React.FC<ProfileBuilderProps> = ({
       </div>
 
       {/* Navigation Help */}
-      <div className='mt-6 text-center text-sm text-gray-600'>
+      <div className='mt-8 text-center text-sm text-gray-600 bg-amber-50/80 backdrop-blur-md border border-amber-200/50 rounded-xl p-4'>
         <p>Your progress is automatically saved after each step.</p>
         <p>
           You can return to any section at any time to update your information.

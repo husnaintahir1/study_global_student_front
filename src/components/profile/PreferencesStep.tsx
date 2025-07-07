@@ -176,16 +176,19 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+    <div className='space-y-8'>
       {/* Basic Preferences */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Study Preferences
         </h3>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <label htmlFor='preferredCourse' className='label'>
-              Field of Study <span className='text-red-500'>*</span>
+            <label
+              htmlFor='preferredCourse'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Field of Study <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('preferredCourse', {
@@ -193,38 +196,48 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               })}
               type='text'
               id='preferredCourse'
-              className={`input ${errors.preferredCourse ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.preferredCourse ? 'border-red-300' : ''
+              }`}
               placeholder='e.g., Computer Science'
             />
             {errors.preferredCourse && (
-              <p className='error-text'>{errors.preferredCourse.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.preferredCourse.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='specialization' className='label'>
+            <label
+              htmlFor='specialization'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               Specialization
             </label>
             <input
               {...register('specialization')}
               type='text'
               id='specialization'
-              className='input'
+              className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
               placeholder='e.g., Data Science'
             />
           </div>
 
           <div>
-            <label htmlFor='preferredCountry' className='label'>
-              Country <span className='text-red-500'>*</span>
+            <label
+              htmlFor='preferredCountry'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Country <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('preferredCountry', {
                 validate: validators.required('Country'),
               })}
               id='preferredCountry'
-              className={`input ${
-                errors.preferredCountry ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.preferredCountry ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select country</option>
@@ -235,13 +248,18 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               ))}
             </select>
             {errors.preferredCountry && (
-              <p className='error-text'>{errors.preferredCountry.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.preferredCountry.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='intakeYear' className='label'>
-              Intake Year <span className='text-red-500'>*</span>
+            <label
+              htmlFor='intakeYear'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Intake Year <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('intendedIntake.year', {
@@ -249,8 +267,8 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
                 valueAsNumber: true,
               })}
               id='intakeYear'
-              className={`input ${
-                errors.intendedIntake?.year ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.intendedIntake?.year ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select year</option>
@@ -261,21 +279,26 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               ))}
             </select>
             {errors.intendedIntake?.year && (
-              <p className='error-text'>{errors.intendedIntake.year.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.intendedIntake.year.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='intakeSeason' className='label'>
-              Intake Season <span className='text-red-500'>*</span>
+            <label
+              htmlFor='intakeSeason'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Intake Season <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('intendedIntake.season', {
                 validate: validators.required('Intake season'),
               })}
               id='intakeSeason'
-              className={`input ${
-                errors.intendedIntake?.season ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.intendedIntake?.season ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select season</option>
@@ -286,7 +309,7 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               ))}
             </select>
             {errors.intendedIntake?.season && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.intendedIntake.season.message}
               </p>
             )}
@@ -296,13 +319,15 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
 
       {/* University Selection Module */}
       {preferredCountry && (
-        <div>
-          <div className='flex items-center justify-between mb-4'>
-            <label className='label mb-0'>Select Universities</label>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <div className='flex items-center justify-between mb-2'>
+            <h3 className='text-2xl font-semibold text-gray-900'>
+              Select Universities
+            </h3>
             <button
               type='button'
               onClick={() => setShowUniversityModule(!showUniversityModule)}
-              className='text-primary-600 hover:text-primary-700 text-sm font-medium'
+              className='text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center'
             >
               {showUniversityModule ? 'Hide' : 'Browse'} Universities
             </button>
@@ -316,26 +341,26 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
           )}
 
           {showUniversityModule && (
-            <div className='border rounded-lg p-4 space-y-4'>
+            <div className='space-y-4'>
               {/* Filters */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div className='relative'>
-                  <FiSearch className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+                  <FiSearch className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
                   <input
                     type='text'
                     value={universitySearch}
                     onChange={(e) => setUniversitySearch(e.target.value)}
                     placeholder='Search university or city...'
-                    className='input pl-10 text-sm'
+                    className='w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                   />
                 </div>
 
                 <div className='relative'>
-                  <FiFilter className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+                  <FiFilter className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5' />
                   <select
                     value={courseFilter}
                     onChange={(e) => setCourseFilter(e.target.value)}
-                    className='input pl-10 text-sm'
+                    className='w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                     disabled={isLoadingCourses}
                   >
                     <option value=''>All Courses</option>
@@ -365,13 +390,13 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
                   {filteredUniversities.map((university) => (
                     <label
                       key={university.id}
-                      className='flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50'
+                      className='flex items-center p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-all'
                     >
                       <input
                         type='checkbox'
                         checked={selectedUniversities.includes(university.id)}
                         onChange={() => toggleUniversity(university.id)}
-                        className='h-4 w-4 text-primary-600 rounded'
+                        className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
                       />
                       <div className='ml-3 flex-1'>
                         <p className='font-medium text-gray-900'>
@@ -392,8 +417,8 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
 
               {/* Selected Count */}
               {selectedUniversities.length > 0 && (
-                <div className='pt-3 border-t'>
-                  <p className='text-sm font-medium text-primary-600'>
+                <div className='pt-3 border-t border-gray-200'>
+                  <p className='text-sm font-medium text-blue-600'>
                     {selectedUniversities.length} universities selected
                   </p>
                 </div>
@@ -404,14 +429,17 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
       )}
 
       {/* Motivation */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Motivation & Goals
         </h3>
-        <div className='space-y-4'>
+        <div className='space-y-6'>
           <div>
-            <label htmlFor='studyReason' className='label'>
-              Why study abroad? <span className='text-red-500'>*</span>
+            <label
+              htmlFor='studyReason'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Why study abroad? <span className='text-red-600'>*</span>
             </label>
             <textarea
               {...register('studyReason', {
@@ -419,16 +447,23 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               })}
               id='studyReason'
               rows={3}
-              className={`input ${errors.studyReason ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none ${
+                errors.studyReason ? 'border-red-300' : ''
+              }`}
             />
             {errors.studyReason && (
-              <p className='error-text'>{errors.studyReason.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.studyReason.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='careerGoals' className='label'>
-              Career Goals <span className='text-red-500'>*</span>
+            <label
+              htmlFor='careerGoals'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Career Goals <span className='text-red-600'>*</span>
             </label>
             <textarea
               {...register('careerGoals', {
@@ -436,62 +471,85 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
               })}
               id='careerGoals'
               rows={3}
-              className={`input ${errors.careerGoals ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none ${
+                errors.careerGoals ? 'border-red-300' : ''
+              }`}
             />
             {errors.careerGoals && (
-              <p className='error-text'>{errors.careerGoals.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.careerGoals.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       {/* Additional Options */}
-      <div className='space-y-2'>
-        <label className='flex items-center space-x-2'>
-          <input
-            {...register('scholarshipInterest')}
-            type='checkbox'
-            className='h-4 w-4 text-primary-600 rounded'
-          />
-          <span className='text-sm'>Interested in scholarships</span>
-        </label>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
+          Additional Preferences
+        </h3>
+        <div className='space-y-3'>
+          <label className='flex items-center space-x-3'>
+            <input
+              {...register('scholarshipInterest')}
+              type='checkbox'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
+            />
+            <span className='text-sm text-gray-900'>
+              Interested in scholarships
+            </span>
+          </label>
 
-        <label className='flex items-center space-x-2'>
-          <input
-            {...register('coOpInterest')}
-            type='checkbox'
-            className='h-4 w-4 text-primary-600 rounded'
-          />
-          <span className='text-sm'>Interested in Co-op programs</span>
-        </label>
+          <label className='flex items-center space-x-3'>
+            <input
+              {...register('coOpInterest')}
+              type='checkbox'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
+            />
+            <span className='text-sm text-gray-900'>
+              Interested in Co-op programs
+            </span>
+          </label>
 
-        <label className='flex items-center space-x-2'>
-          <input
-            {...register('familyAbroad')}
-            type='checkbox'
-            className='h-4 w-4 text-primary-600 rounded'
-          />
-          <span className='text-sm'>Have family in preferred country</span>
-        </label>
+          <label className='flex items-center space-x-3'>
+            <input
+              {...register('familyAbroad')}
+              type='checkbox'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
+            />
+            <span className='text-sm text-gray-900'>
+              Have family in preferred country
+            </span>
+          </label>
 
-        <label className='flex items-center space-x-2'>
-          <input
-            {...register('accommodationSupport')}
-            type='checkbox'
-            className='h-4 w-4 text-primary-600 rounded'
-          />
-          <span className='text-sm'>Need accommodation assistance</span>
-        </label>
+          <label className='flex items-center space-x-3'>
+            <input
+              {...register('accommodationSupport')}
+              type='checkbox'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
+            />
+            <span className='text-sm text-gray-900'>
+              Need accommodation assistance
+            </span>
+          </label>
+        </div>
       </div>
 
-      <div className='flex justify-between'>
-        <button type='button' onClick={onPrevious} className='btn btn-outline'>
+      <div className='flex justify-between mt-8'>
+        <button
+          type='button'
+          onClick={onPrevious}
+          className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors'
+          disabled={isSubmitting || isSaving}
+        >
           Previous
         </button>
         <button
-          type='submit'
+          type='button'
+          onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting || isSaving}
-          className='btn btn-primary flex items-center'
+          className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center'
         >
           {isSubmitting || isSaving ? (
             <LoadingSpinner size='sm' />
@@ -500,6 +558,6 @@ export const PreferencesStep: React.FC<PreferencesStepProps> = ({
           )}
         </button>
       </div>
-    </form>
+    </div>
   );
 };

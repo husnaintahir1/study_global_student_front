@@ -18,8 +18,6 @@ interface PersonalInfoStepProps {
 type ExtendedPersonalInfo = StudentProfile['personalInfo'] & {
   profilePicture?: string;
   religion?: string;
-  sect?: string;
-  ethnicity?: string;
   socialLinks?: {
     linkedin?: string;
     facebook?: string;
@@ -30,6 +28,7 @@ type ExtendedPersonalInfo = StudentProfile['personalInfo'] & {
 export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   data,
   onNext,
+  onPrevious,
   isSaving,
 }) => {
   const [uploadingFiles, setUploadingFiles] = useState<{
@@ -151,25 +150,14 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     'Other',
   ];
 
-  const ethnicities = [
-    'Punjabi',
-    'Pashtun',
-    'Sindhi',
-    'Baloch',
-    'Muhajir',
-    'Kashmiri',
-    'Saraiki',
-    'Other',
-  ];
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+    <div className='space-y-8'>
       {/* Document Disclaimer */}
-      <div className='bg-amber-50 border border-amber-200 rounded-lg p-4'>
-        <div className='flex'>
-          <FiInfo className='h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0' />
+      <div className='bg-amber-50/80 backdrop-blur-md border border-amber-200/50 rounded-2xl p-6 shadow-xl'>
+        <div className='flex items-start gap-3'>
+          <FiInfo className='h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0' />
           <div>
-            <h4 className='text-sm font-medium text-amber-900 mb-1'>
+            <h4 className='text-sm font-medium text-amber-900 mb-2'>
               Important Document Notice
             </h4>
             <p className='text-sm text-amber-700'>
@@ -183,8 +171,8 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {/* Profile Picture */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Profile Picture
         </h3>
         <div className='flex items-center space-x-6'>
@@ -193,7 +181,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <img
                 src={profilePicturePreview}
                 alt='Profile'
-                className='h-24 w-24 rounded-full object-cover'
+                className='h-24 w-24 rounded-full object-cover border-2 border-gray-200'
               />
             ) : (
               <div className='h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center'>
@@ -209,9 +197,9 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           <div>
             <label
               htmlFor='profilePicture'
-              className='btn btn-outline cursor-pointer'
+              className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
             >
-              <FiUpload className='mr-2' />
+              <FiUpload className='mr-1 h-5 w-5' />
               Upload Photo
             </label>
             <input
@@ -221,7 +209,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               onChange={handleProfilePictureChange}
               className='hidden'
             />
-            <p className='text-sm text-gray-500 mt-2'>
+            <p className='text-xs text-gray-500 mt-2'>
               JPG, PNG up to 5MB. Passport size photo recommended.
             </p>
           </div>
@@ -229,14 +217,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {/* Basic Information */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Basic Information
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <label htmlFor='firstName' className='label'>
-              First Name <span className='text-red-500'>*</span>
+            <label
+              htmlFor='firstName'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              First Name <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('fullName.firstName', {
@@ -244,18 +235,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='firstName'
-              className={`input ${
-                errors.fullName?.firstName ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.fullName?.firstName ? 'border-red-300' : ''
               }`}
             />
             {errors.fullName?.firstName && (
-              <p className='error-text'>{errors.fullName.firstName.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.fullName.firstName.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='lastName' className='label'>
-              Last Name <span className='text-red-500'>*</span>
+            <label
+              htmlFor='lastName'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Last Name <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('fullName.lastName', {
@@ -263,18 +259,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='lastName'
-              className={`input ${
-                errors.fullName?.lastName ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.fullName?.lastName ? 'border-red-300' : ''
               }`}
             />
             {errors.fullName?.lastName && (
-              <p className='error-text'>{errors.fullName.lastName.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.fullName.lastName.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='fatherName' className='label'>
-              Father's Name <span className='text-red-500'>*</span>
+            <label
+              htmlFor='fatherName'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Father's Name <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('fatherName', {
@@ -282,16 +283,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='fatherName'
-              className={`input ${errors.fatherName ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.fatherName ? 'border-red-300' : ''
+              }`}
             />
             {errors.fatherName && (
-              <p className='error-text'>{errors.fatherName.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.fatherName.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='dateOfBirth' className='label'>
-              Date of Birth <span className='text-red-500'>*</span>
+            <label
+              htmlFor='dateOfBirth'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Date of Birth <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('dateOfBirth', {
@@ -302,23 +310,32 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='date'
               id='dateOfBirth'
-              className={`input ${errors.dateOfBirth ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.dateOfBirth ? 'border-red-300' : ''
+              }`}
             />
             {errors.dateOfBirth && (
-              <p className='error-text'>{errors.dateOfBirth.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.dateOfBirth.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='gender' className='label'>
-              Gender <span className='text-red-500'>*</span>
+            <label
+              htmlFor='gender'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Gender <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('gender', {
                 validate: validators.required('Gender'),
               })}
               id='gender'
-              className={`input ${errors.gender ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.gender ? 'border-red-300' : ''
+              }`}
             >
               <option value=''>Select gender</option>
               <option value='male'>Male</option>
@@ -326,18 +343,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <option value='other'>Other</option>
             </select>
             {errors.gender && (
-              <p className='error-text'>{errors.gender.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.gender.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='religion' className='label'>
+            <label
+              htmlFor='religion'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               Religion
             </label>
             <select
               {...register('religion' as any)}
               id='religion'
-              className='input'
+              className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
             >
               <option value=''>Select religion</option>
               {religions.map((religion) => (
@@ -349,39 +371,11 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           </div>
 
           <div>
-            <label htmlFor='sect' className='label'>
-              Sect (if applicable)
-            </label>
-            <input
-              {...register('sect' as any)}
-              type='text'
-              id='sect'
-              className='input'
-              placeholder='e.g., Sunni, Shia, etc.'
-            />
-          </div>
-
-          <div>
-            <label htmlFor='ethnicity' className='label'>
-              Ethnicity
-            </label>
-            <select
-              {...register('ethnicity' as any)}
-              id='ethnicity'
-              className='input'
+            <label
+              htmlFor='cnicNumber'
+              className='block text-sm font-medium text-gray-900 mb-2'
             >
-              <option value=''>Select ethnicity</option>
-              {ethnicities.map((ethnicity) => (
-                <option key={ethnicity} value={ethnicity}>
-                  {ethnicity}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor='cnicNumber' className='label'>
-              CNIC Number <span className='text-red-500'>*</span>
+              CNIC Number <span className='text-red-600'>*</span>
             </label>
             <div className='space-y-2'>
               <input
@@ -395,18 +389,21 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 type='text'
                 id='cnicNumber'
                 placeholder='XXXXX-XXXXXXX-X'
-                className={`input ${errors.cnicNumber ? 'input-error' : ''}`}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.cnicNumber ? 'border-red-300' : ''
+                }`}
               />
               {errors.cnicNumber && (
-                <p className='error-text'>{errors.cnicNumber.message}</p>
+                <p className='text-xs text-red-600 mt-1'>
+                  {errors.cnicNumber.message}
+                </p>
               )}
-
-              <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-4'>
                 <label
                   htmlFor='cnicFile'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload CNIC Copy
                 </label>
                 <input
@@ -419,15 +416,22 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                   }}
                   className='hidden'
                 />
-                {uploadedFiles.cnic && <FiCheck className='text-green-600' />}
+                {uploadedFiles.cnic && (
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
+                )}
                 {uploadingFiles.cnic && <LoadingSpinner size='sm' />}
               </div>
             </div>
           </div>
 
           <div>
-            <label htmlFor='phone' className='label'>
-              Phone Number <span className='text-red-500'>*</span>
+            <label
+              htmlFor='phone'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Phone Number <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('phone', {
@@ -439,71 +443,91 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               type='tel'
               id='phone'
               placeholder='+92 XXX XXXXXXX'
-              className={`input ${errors.phone ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.phone ? 'border-red-300' : ''
+              }`}
             />
             {errors.phone && (
-              <p className='error-text'>{errors.phone.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.phone.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='email' className='label'>
-              Email Address <span className='text-red-500'>*</span>
+            <label
+              htmlFor='email'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Email Address <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('email', { validate: validators.email })}
               type='email'
               id='email'
-              className={`input ${errors.email ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.email ? 'border-red-300' : ''
+              }`}
             />
             {errors.email && (
-              <p className='error-text'>{errors.email.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.email.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       {/* Social Links */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Social Media Links (Optional)
         </h3>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           <div>
-            <label htmlFor='linkedin' className='label'>
+            <label
+              htmlFor='linkedin'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               LinkedIn
             </label>
             <input
               {...register('socialLinks.linkedin' as any)}
               type='url'
               id='linkedin'
-              className='input'
+              className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
               placeholder='https://linkedin.com/in/...'
             />
           </div>
 
           <div>
-            <label htmlFor='facebook' className='label'>
+            <label
+              htmlFor='facebook'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               Facebook
             </label>
             <input
               {...register('socialLinks.facebook' as any)}
               type='url'
               id='facebook'
-              className='input'
+              className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
               placeholder='https://facebook.com/...'
             />
           </div>
 
           <div>
-            <label htmlFor='instagram' className='label'>
+            <label
+              htmlFor='instagram'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               Instagram
             </label>
             <input
               {...register('socialLinks.instagram' as any)}
               type='url'
               id='instagram'
-              className='input'
+              className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
               placeholder='https://instagram.com/...'
             />
           </div>
@@ -511,14 +535,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {/* Permanent Address */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Permanent Address
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div className='md:col-span-2'>
-            <label htmlFor='street' className='label'>
-              Street Address <span className='text-red-500'>*</span>
+            <label
+              htmlFor='street'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Street Address <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('permanentAddress.street', {
@@ -526,20 +553,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='street'
-              className={`input ${
-                errors.permanentAddress?.street ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.permanentAddress?.street ? 'border-red-300' : ''
               }`}
             />
             {errors.permanentAddress?.street && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.permanentAddress.street.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='city' className='label'>
-              City <span className='text-red-500'>*</span>
+            <label
+              htmlFor='city'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              City <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('permanentAddress.city', {
@@ -547,28 +577,33 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='city'
-              className={`input ${
-                errors.permanentAddress?.city ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.permanentAddress?.city ? 'border-red-300' : ''
               }`}
             />
             {errors.permanentAddress?.city && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.permanentAddress.city.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='province' className='label'>
-              Province of Domicile <span className='text-red-500'>*</span>
+            <label
+              htmlFor='province'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Province of Domicile <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('permanentAddress.provinceOfDomicile', {
                 validate: validators.required('Province'),
               })}
               id='province'
-              className={`input ${
-                errors.permanentAddress?.provinceOfDomicile ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.permanentAddress?.provinceOfDomicile
+                  ? 'border-red-300'
+                  : ''
               }`}
             >
               <option value=''>Select province</option>
@@ -579,15 +614,18 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               ))}
             </select>
             {errors.permanentAddress?.provinceOfDomicile && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.permanentAddress.provinceOfDomicile.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='postalCode' className='label'>
-              Postal Code <span className='text-red-500'>*</span>
+            <label
+              htmlFor='postalCode'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Postal Code <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('permanentAddress.postalCode', {
@@ -595,28 +633,31 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='postalCode'
-              className={`input ${
-                errors.permanentAddress?.postalCode ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.permanentAddress?.postalCode ? 'border-red-300' : ''
               }`}
             />
             {errors.permanentAddress?.postalCode && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.permanentAddress.postalCode.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='residenceCountry' className='label'>
-              Country of Residence <span className='text-red-500'>*</span>
+            <label
+              htmlFor='residenceCountry'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Country of Residence <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('residenceCountry', {
                 validate: validators.required('Country of residence'),
               })}
               id='residenceCountry'
-              className={`input ${
-                errors.residenceCountry ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.residenceCountry ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select country</option>
@@ -628,21 +669,26 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               ))}
             </select>
             {errors.residenceCountry && (
-              <p className='error-text'>{errors.residenceCountry.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.residenceCountry.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       {/* Emergency Contact */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Emergency Contact
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           <div>
-            <label htmlFor='emergencyName' className='label'>
-              Contact Name <span className='text-red-500'>*</span>
+            <label
+              htmlFor='emergencyName'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Contact Name <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('emergencyContact.name', {
@@ -650,28 +696,31 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='emergencyName'
-              className={`input ${
-                errors.emergencyContact?.name ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.emergencyContact?.name ? 'border-red-300' : ''
               }`}
             />
             {errors.emergencyContact?.name && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.emergencyContact.name.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='emergencyRelation' className='label'>
-              Relationship <span className='text-red-500'>*</span>
+            <label
+              htmlFor='emergencyRelation'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Relationship <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('emergencyContact.relation', {
                 validate: validators.required('Relationship'),
               })}
               id='emergencyRelation'
-              className={`input ${
-                errors.emergencyContact?.relation ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.emergencyContact?.relation ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select relationship</option>
@@ -682,15 +731,18 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               ))}
             </select>
             {errors.emergencyContact?.relation && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.emergencyContact.relation.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='emergencyPhone' className='label'>
-              Contact Phone <span className='text-red-500'>*</span>
+            <label
+              htmlFor='emergencyPhone'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Contact Phone <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('emergencyContact.phone', {
@@ -702,12 +754,12 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               type='tel'
               id='emergencyPhone'
               placeholder='+92 XXX XXXXXXX'
-              className={`input ${
-                errors.emergencyContact?.phone ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.emergencyContact?.phone ? 'border-red-300' : ''
               }`}
             />
             {errors.emergencyContact?.phone && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.emergencyContact.phone.message}
               </p>
             )}
@@ -716,22 +768,25 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {/* Passport Details */}
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Passport Details
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           <div>
-            <label htmlFor='passportCountry' className='label'>
-              Passport Country <span className='text-red-500'>*</span>
+            <label
+              htmlFor='passportCountry'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Passport Country <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('passportDetails.passportCountry', {
                 validate: validators.required('Passport country'),
               })}
               id='passportCountry'
-              className={`input ${
-                errors.passportDetails?.passportCountry ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.passportDetails?.passportCountry ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select country</option>
@@ -743,15 +798,18 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               ))}
             </select>
             {errors.passportDetails?.passportCountry && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.passportDetails.passportCountry.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='passportNumber' className='label'>
-              Passport Number <span className='text-red-500'>*</span>
+            <label
+              htmlFor='passportNumber'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Passport Number <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('passportDetails.passportNumber', {
@@ -759,20 +817,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='text'
               id='passportNumber'
-              className={`input ${
-                errors.passportDetails?.passportNumber ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.passportDetails?.passportNumber ? 'border-red-300' : ''
               }`}
             />
             {errors.passportDetails?.passportNumber && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.passportDetails.passportNumber.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='passportExpiry' className='label'>
-              Passport Expiry Date <span className='text-red-500'>*</span>
+            <label
+              htmlFor='passportExpiry'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Passport Expiry Date <span className='text-red-600'>*</span>
             </label>
             <input
               {...register('passportDetails.passportExpiry', {
@@ -783,24 +844,24 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               })}
               type='date'
               id='passportExpiry'
-              className={`input ${
-                errors.passportDetails?.passportExpiry ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.passportDetails?.passportExpiry ? 'border-red-300' : ''
               }`}
             />
             {errors.passportDetails?.passportExpiry && (
-              <p className='error-text'>
+              <p className='text-xs text-red-600 mt-1'>
                 {errors.passportDetails.passportExpiry.message}
               </p>
             )}
           </div>
 
           <div className='md:col-span-3'>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-4'>
               <label
                 htmlFor='passportFile'
-                className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
               >
-                <FiUpload className='mr-1' />
+                <FiUpload className='mr-1 h-5 w-5' />
                 Upload Passport Copy (Optional)
               </label>
               <input
@@ -813,7 +874,11 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 }}
                 className='hidden'
               />
-              {uploadedFiles.passport && <FiCheck className='text-green-600' />}
+              {uploadedFiles.passport && (
+                <div className='p-2 bg-green-100 rounded-lg'>
+                  <FiCheck className='h-5 w-5 text-green-600' />
+                </div>
+              )}
               {uploadingFiles.passport && <LoadingSpinner size='sm' />}
             </div>
             <p className='text-xs text-gray-500 mt-1'>
@@ -824,11 +889,20 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
         </div>
       </div>
 
-      <div className='flex justify-end'>
+      <div className='flex justify-between mt-8'>
         <button
-          type='submit'
+          type='button'
+          onClick={onPrevious}
+          className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors'
           disabled={isSubmitting || isSaving}
-          className='btn btn-primary flex items-center'
+        >
+          Previous
+        </button>
+        <button
+          type='button'
+          onClick={handleSubmit(onSubmit)}
+          disabled={isSubmitting || isSaving}
+          className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center'
         >
           {isSubmitting || isSaving ? (
             <LoadingSpinner size='sm' />
@@ -837,6 +911,6 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
           )}
         </button>
       </div>
-    </form>
+    </div>
   );
 };

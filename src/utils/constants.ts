@@ -17,6 +17,12 @@ export const ROUTES = {
   SETTINGS: '/settings',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
+  COURSE_FINDER: '/course-finder',
+  COURSE_DETAILS: '/courses/:id',
+  CHECK_LIST: '/checklist',
+
+  PROPOSAL: '/proposals',
+  PROPOSAL_DETAILS: '/proposals/:id',
 } as const;
 
 export const DOCUMENT_TYPES = {

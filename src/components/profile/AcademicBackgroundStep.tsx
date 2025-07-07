@@ -26,7 +26,7 @@ interface ExtendedAcademicBackground extends EducationalBackground {
     gradingSystem: 'percentage' | 'grades';
     scorePercentage?: number;
     grades?: { subject: string; grade: string }[];
-    rollNumber?: string;
+    institute?: string;
     subjects?: string;
     documentId?: string;
   };
@@ -37,7 +37,7 @@ interface ExtendedAcademicBackground extends EducationalBackground {
     scorePercentage?: number;
     grades?: { subject: string; grade: string }[];
     preEngineeringOrPreMedical: 'pre-engineering' | 'pre-medical' | 'other';
-    rollNumber?: string;
+    institute?: string;
     subjects?: string;
     documentId?: string;
   };
@@ -275,14 +275,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
 
   return (
     <div className='space-y-8'>
-      <div className='bg-amber-50 border border-amber-200 rounded-lg p-4'>
-        <div className='flex'>
-          <FiInfo className='h-5 w-5 text-amber-600 mt-0.5 mr-2 flex-shrink-0' />
+      <div className='bg-yellow-50/80 backdrop-blur-md border border-yellow-200/50 rounded-2xl p-6 shadow-xl'>
+        <div className='flex items-start gap-3'>
+          <FiInfo className='h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0' />
           <div>
-            <h4 className='text-sm font-medium text-amber-900 mb-1'>
+            <h4 className='text-sm font-medium text-yellow-900 mb-2'>
               Document Attestation Required
             </h4>
-            <p className='text-sm text-amber-700'>
+            <p className='text-sm text-yellow-800'>
               All educational documents (transcripts, degrees, certificates)
               must be attested by:
               <br />• HEC (Higher Education Commission) for degree level
@@ -295,22 +295,27 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         </div>
       </div>
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-blue-50/50 to-purple-50/50 p-6 border-b border-gray-200/50 rounded-2xl'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Study Level & Admission Year
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <label htmlFor='studyLevel' className='label'>
+            <label
+              htmlFor='studyLevel'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               What level are you applying for?{' '}
-              <span className='text-red-500'>*</span>
+              <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('studyLevel', {
                 validate: validators.required('Study level'),
               })}
               id='studyLevel'
-              className={`input ${errors.studyLevel ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.studyLevel ? 'border-red-300' : ''
+              }`}
             >
               <option value=''>Select study level</option>
               <option value='bachelor'>Bachelor's Degree</option>
@@ -319,13 +324,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <option value='diploma'>Diploma</option>
             </select>
             {errors.studyLevel && (
-              <p className='error-text'>{errors.studyLevel.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.studyLevel.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='admissionYear' className='label'>
-              Intended Admission Year <span className='text-red-500'>*</span>
+            <label
+              htmlFor='admissionYear'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Intended Admission Year <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('admissionYear', {
@@ -333,7 +343,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 valueAsNumber: true,
               })}
               id='admissionYear'
-              className={`input ${errors.admissionYear ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.admissionYear ? 'border-red-300' : ''
+              }`}
             >
               <option value=''>Select year</option>
               {[currentYear, currentYear + 1, currentYear + 2].map((year) => (
@@ -343,21 +355,26 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               ))}
             </select>
             {errors.admissionYear && (
-              <p className='error-text'>{errors.admissionYear.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.admissionYear.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       {studyLevel === 'bachelor' && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Matriculation/O-Levels
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='matricYear' className='label'>
-                Completion Year <span className='text-red-500'>*</span>
+              <label
+                htmlFor='matricYear'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Completion Year <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('matriculation.year', {
@@ -368,8 +385,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   valueAsNumber: true,
                 })}
                 id='matricYear'
-                className={`input ${
-                  errors.matriculation?.year ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.matriculation?.year ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select year</option>
@@ -380,15 +397,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.matriculation?.year && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.matriculation.year.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='matricBoard' className='label'>
-                Board/System <span className='text-red-500'>*</span>
+              <label
+                htmlFor='matricBoard'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Board/System <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('matriculation.board', {
@@ -398,8 +418,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='matricBoard'
-                className={`input ${
-                  errors.matriculation?.board ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.matriculation?.board ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select board</option>
@@ -410,15 +430,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.matriculation?.board && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.matriculation.board.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='matricGradingSystem' className='label'>
-                Grading System <span className='text-red-500'>*</span>
+              <label
+                htmlFor='matricGradingSystem'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Grading System <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('matriculation.gradingSystem', {
@@ -428,8 +451,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='matricGradingSystem'
-                className={`input ${
-                  errors.matriculation?.gradingSystem ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.matriculation?.gradingSystem ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select grading system</option>
@@ -437,7 +460,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <option value='grades'>Grades (A*, A, B, etc.)</option>
               </select>
               {errors.matriculation?.gradingSystem && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.matriculation.gradingSystem.message}
                 </p>
               )}
@@ -445,8 +468,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
 
             {matricGradingSystem === 'percentage' && (
               <div>
-                <label htmlFor='matricScore' className='label'>
-                  Percentage <span className='text-red-500'>*</span>
+                <label
+                  htmlFor='matricScore'
+                  className='block text-sm font-medium text-gray-900 mb-2'
+                >
+                  Percentage <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('matriculation.scorePercentage', {
@@ -465,12 +491,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   step='0.01'
                   id='matricScore'
                   placeholder='e.g., 85.5'
-                  className={`input ${
-                    errors.matriculation?.scorePercentage ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.matriculation?.scorePercentage
+                      ? 'border-red-300'
+                      : ''
                   }`}
                 />
                 {errors.matriculation?.scorePercentage && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.matriculation.scorePercentage.message}
                   </p>
                 )}
@@ -479,10 +507,10 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
 
             {matricGradingSystem === 'grades' && (
               <div className='md:col-span-2'>
-                <label className='label'>
-                  Grades <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Grades <span className='text-red-600'>*</span>
                 </label>
-                <div className='space-y-2'>
+                <div className='space-y-3'>
                   {['subject1', 'subject2', 'subject3'].map((_, index) => (
                     <div key={index} className='flex gap-4'>
                       <input
@@ -493,9 +521,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                               : undefined,
                         })}
                         placeholder='Subject'
-                        className={`input flex-1 ${
+                        className={`flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                           errors.matriculation?.grades?.[index]?.subject
-                            ? 'input-error'
+                            ? 'border-red-300'
                             : ''
                         }`}
                       />
@@ -506,9 +534,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                               ? validators.required('Grade')
                               : undefined,
                         })}
-                        className={`input w-24 ${
+                        className={`w-24 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                           errors.matriculation?.grades?.[index]?.grade
-                            ? 'input-error'
+                            ? 'border-red-300'
                             : ''
                         }`}
                       >
@@ -526,27 +554,33 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
             )}
 
             <div>
-              <label htmlFor='matricRoll' className='label'>
-                Roll Number
+              <label
+                htmlFor='matricRoll'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Institute Name
               </label>
               <input
-                {...register('matriculation.rollNumber')}
+                {...register('matriculation.institute')}
                 type='text'
                 id='matricRoll'
-                className='input'
-                placeholder='Enter roll number'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
+                placeholder='Enter institute name'
               />
             </div>
 
             <div className='md:col-span-2'>
-              <label htmlFor='matricSubjects' className='label'>
+              <label
+                htmlFor='matricSubjects'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Major Subjects
               </label>
               <input
                 {...register('matriculation.subjects')}
                 type='text'
                 id='matricSubjects'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='e.g., Physics, Chemistry, Mathematics, Biology'
               />
             </div>
@@ -555,9 +589,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='matricDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Matriculation Certificate/Transcript
                 </label>
                 <input
@@ -576,7 +610,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['matriculation.document'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['matriculation.document'] && (
                   <LoadingSpinner size='sm' />
@@ -592,14 +628,17 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
       )}
 
       {studyLevel === 'bachelor' && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Intermediate/A-Levels
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='interYear' className='label'>
-                Completion Year <span className='text-red-500'>*</span>
+              <label
+                htmlFor='interYear'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Completion Year <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('intermediate.year', {
@@ -610,8 +649,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   valueAsNumber: true,
                 })}
                 id='interYear'
-                className={`input ${
-                  errors.intermediate?.year ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.intermediate?.year ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select year</option>
@@ -622,13 +661,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.intermediate?.year && (
-                <p className='error-text'>{errors.intermediate.year.message}</p>
+                <p className='text-xs text-red-600 mt-1'>
+                  {errors.intermediate.year.message}
+                </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='interBoard' className='label'>
-                Board/System <span className='text-red-500'>*</span>
+              <label
+                htmlFor='interBoard'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Board/System <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('intermediate.board', {
@@ -638,8 +682,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='interBoard'
-                className={`input ${
-                  errors.intermediate?.board ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.intermediate?.board ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select board</option>
@@ -650,15 +694,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.intermediate?.board && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.intermediate.board.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='interGradingSystem' className='label'>
-                Grading System <span className='text-red-500'>*</span>
+              <label
+                htmlFor='interGradingSystem'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Grading System <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('intermediate.gradingSystem', {
@@ -668,8 +715,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='interGradingSystem'
-                className={`input ${
-                  errors.intermediate?.gradingSystem ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.intermediate?.gradingSystem ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select grading system</option>
@@ -677,7 +724,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <option value='grades'>Grades (A*, A, B, etc.)</option>
               </select>
               {errors.intermediate?.gradingSystem && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.intermediate.gradingSystem.message}
                 </p>
               )}
@@ -685,8 +732,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
 
             {interGradingSystem === 'percentage' && (
               <div>
-                <label htmlFor='interScore' className='label'>
-                  Percentage <span className='text-red-500'>*</span>
+                <label
+                  htmlFor='interScore'
+                  className='block text-sm font-medium text-gray-900 mb-2'
+                >
+                  Percentage <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('intermediate.scorePercentage', {
@@ -705,12 +755,12 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   step='0.01'
                   id='interScore'
                   placeholder='e.g., 85.5'
-                  className={`input ${
-                    errors.intermediate?.scorePercentage ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.intermediate?.scorePercentage ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.intermediate?.scorePercentage && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.intermediate.scorePercentage.message}
                   </p>
                 )}
@@ -719,10 +769,10 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
 
             {interGradingSystem === 'grades' && (
               <div className='md:col-span-2'>
-                <label className='label'>
-                  Grades <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Grades <span className='text-red-600'>*</span>
                 </label>
-                <div className='space-y-2'>
+                <div className='space-y-3'>
                   {['subject1', 'subject2', 'subject3'].map((_, index) => (
                     <div key={index} className='flex gap-4'>
                       <input
@@ -733,9 +783,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                               : undefined,
                         })}
                         placeholder='Subject'
-                        className={`input flex-1 ${
+                        className={`flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                           errors.intermediate?.grades?.[index]?.subject
-                            ? 'input-error'
+                            ? 'border-red-300'
                             : ''
                         }`}
                       />
@@ -746,9 +796,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                               ? validators.required('Grade')
                               : undefined,
                         })}
-                        className={`input w-24 ${
+                        className={`w-24 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                           errors.intermediate?.grades?.[index]?.grade
-                            ? 'input-error'
+                            ? 'border-red-300'
                             : ''
                         }`}
                       >
@@ -766,8 +816,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
             )}
 
             <div>
-              <label htmlFor='interProgram' className='label'>
-                Program <span className='text-red-500'>*</span>
+              <label
+                htmlFor='interProgram'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Program <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('intermediate.preEngineeringOrPreMedical', {
@@ -777,9 +830,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='interProgram'
-                className={`input ${
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                   errors.intermediate?.preEngineeringOrPreMedical
-                    ? 'input-error'
+                    ? 'border-red-300'
                     : ''
                 }`}
               >
@@ -789,34 +842,40 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <option value='other'>Other (ICS, Commerce, Arts)</option>
               </select>
               {errors.intermediate?.preEngineeringOrPreMedical && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.intermediate.preEngineeringOrPreMedical.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='interRoll' className='label'>
+              <label
+                htmlFor='interRoll'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Roll Number
               </label>
               <input
-                {...register('intermediate.rollNumber')}
+                {...register('intermediate.institute')}
                 type='text'
                 id='interRoll'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='Enter roll number'
               />
             </div>
 
             <div>
-              <label htmlFor='interSubjects' className='label'>
+              <label
+                htmlFor='interSubjects'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Major Subjects
               </label>
               <input
                 {...register('intermediate.subjects')}
                 type='text'
                 id='interSubjects'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='e.g., Physics, Chemistry, Mathematics'
               />
             </div>
@@ -825,9 +884,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='interDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Intermediate Certificate/Transcript
                 </label>
                 <input
@@ -846,7 +905,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['intermediate.document'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['intermediate.document'] && (
                   <LoadingSpinner size='sm' />
@@ -862,14 +923,17 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
       )}
 
       {(studyLevel === 'master' || studyLevel === 'phd') && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Bachelor's Degree
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='bachelorProgram' className='label'>
-                Program Name <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorProgram'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Program Name <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('bachelorDegree.programName', {
@@ -879,8 +943,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='bachelorProgram'
-                className={`input ${
-                  errors.bachelorDegree?.programName ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.programName ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select program</option>
@@ -891,28 +955,34 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.bachelorDegree?.programName && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.programName.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorSpecialization' className='label'>
+              <label
+                htmlFor='bachelorSpecialization'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Specialization/Major
               </label>
               <input
                 {...register('bachelorDegree.specialization')}
                 type='text'
                 id='bachelorSpecialization'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='e.g., Artificial Intelligence'
               />
             </div>
 
             <div>
-              <label htmlFor='bachelorInstitution' className='label'>
-                Institution <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorInstitution'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Institution <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('bachelorDegree.institution', {
@@ -923,20 +993,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='text'
                 id='bachelorInstitution'
-                className={`input ${
-                  errors.bachelorDegree?.institution ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.institution ? 'border-red-300' : ''
                 }`}
               />
               {errors.bachelorDegree?.institution && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.institution.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorCountry' className='label'>
-                Country <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorCountry'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Country <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('bachelorDegree.country', {
@@ -946,8 +1019,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='bachelorCountry'
-                className={`input ${
-                  errors.bachelorDegree?.country ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.country ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select country</option>
@@ -959,15 +1032,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.bachelorDegree?.country && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.country.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorStartDate' className='label'>
-                Start Date <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorStartDate'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Start Date <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('bachelorDegree.startDate', {
@@ -978,20 +1054,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='month'
                 id='bachelorStartDate'
-                className={`input ${
-                  errors.bachelorDegree?.startDate ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.startDate ? 'border-red-300' : ''
                 }`}
               />
               {errors.bachelorDegree?.startDate && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.startDate.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorEndDate' className='label'>
-                End Date <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorEndDate'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                End Date <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('bachelorDegree.endDate', {
@@ -1002,20 +1081,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='month'
                 id='bachelorEndDate'
-                className={`input ${
-                  errors.bachelorDegree?.endDate ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.endDate ? 'border-red-300' : ''
                 }`}
               />
               {errors.bachelorDegree?.endDate && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.endDate.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorCGPA' className='label'>
-                CGPA/Percentage <span className='text-red-500'>*</span>
+              <label
+                htmlFor='bachelorCGPA'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                CGPA/Percentage <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('bachelorDegree.cgpaPercentage', {
@@ -1026,20 +1108,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='text'
                 id='bachelorCGPA'
-                className={`input ${
-                  errors.bachelorDegree?.cgpaPercentage ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.bachelorDegree?.cgpaPercentage ? 'border-red-300' : ''
                 }`}
                 placeholder='e.g., 3.5/4.0 or 85%'
               />
               {errors.bachelorDegree?.cgpaPercentage && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.bachelorDegree.cgpaPercentage.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='bachelorCredits' className='label'>
+              <label
+                htmlFor='bachelorCredits'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Total Credit Hours
               </label>
               <input
@@ -1048,7 +1133,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='number'
                 id='bachelorCredits'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='e.g., 136'
               />
             </div>
@@ -1057,9 +1142,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='bachelorTranscript'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Bachelor's Transcript
                 </label>
                 <input
@@ -1078,7 +1163,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['bachelorDegree.transcript'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['bachelorDegree.transcript'] && (
                   <LoadingSpinner size='sm' />
@@ -1088,9 +1175,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='bachelorDegree'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Bachelor's Degree
                 </label>
                 <input
@@ -1105,7 +1192,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['bachelorDegree.degree'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['bachelorDegree.degree'] && (
                   <LoadingSpinner size='sm' />
@@ -1117,14 +1206,17 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
       )}
 
       {studyLevel === 'phd' && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Master's Degree
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='masterProgram' className='label'>
-                Program Name <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterProgram'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Program Name <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('masterDegree.programName', {
@@ -1134,8 +1226,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='masterProgram'
-                className={`input ${
-                  errors.masterDegree?.programName ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.programName ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select program</option>
@@ -1146,28 +1238,34 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.masterDegree?.programName && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.programName.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterSpecialization' className='label'>
+              <label
+                htmlFor='masterSpecialization'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Specialization
               </label>
               <input
                 {...register('masterDegree.specialization')}
                 type='text'
                 id='masterSpecialization'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='e.g., Artificial Intelligence'
               />
             </div>
 
             <div>
-              <label htmlFor='masterInstitution' className='label'>
-                Institution <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterInstitution'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Institution <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('masterDegree.institution', {
@@ -1178,20 +1276,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='text'
                 id='masterInstitution'
-                className={`input ${
-                  errors.masterDegree?.institution ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.institution ? 'border-red-300' : ''
                 }`}
               />
               {errors.masterDegree?.institution && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.institution.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterCountry' className='label'>
-                Country <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterCountry'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Country <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('masterDegree.country', {
@@ -1201,8 +1302,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       : undefined,
                 })}
                 id='masterCountry'
-                className={`input ${
-                  errors.masterDegree?.country ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.country ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select country</option>
@@ -1214,15 +1315,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.masterDegree?.country && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.country.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterStartDate' className='label'>
-                Start Date <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterStartDate'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Start Date <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('masterDegree.startDate', {
@@ -1233,20 +1337,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='month'
                 id='masterStartDate'
-                className={`input ${
-                  errors.masterDegree?.startDate ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.startDate ? 'border-red-300' : ''
                 }`}
               />
               {errors.masterDegree?.startDate && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.startDate.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterEndDate' className='label'>
-                End Date <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterEndDate'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                End Date <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('masterDegree.endDate', {
@@ -1257,20 +1364,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='month'
                 id='masterEndDate'
-                className={`input ${
-                  errors.masterDegree?.endDate ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.endDate ? 'border-red-300' : ''
                 }`}
               />
               {errors.masterDegree?.endDate && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.endDate.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterCGPA' className='label'>
-                CGPA/Percentage <span className='text-red-500'>*</span>
+              <label
+                htmlFor='masterCGPA'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                CGPA/Percentage <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('masterDegree.cgpaPercentage', {
@@ -1281,27 +1391,30 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='text'
                 id='masterCGPA'
-                className={`input ${
-                  errors.masterDegree?.cgpaPercentage ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.masterDegree?.cgpaPercentage ? 'border-red-300' : ''
                 }`}
                 placeholder='e.g., 3.5/4.0 or 85%'
               />
               {errors.masterDegree?.cgpaPercentage && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.masterDegree.cgpaPercentage.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='masterThesis' className='label'>
+              <label
+                htmlFor='masterThesis'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Thesis Title
               </label>
               <input
                 {...register('masterDegree.thesisTitle')}
                 type='text'
                 id='masterThesis'
-                className='input'
+                className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                 placeholder='Enter thesis title'
               />
             </div>
@@ -1310,9 +1423,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='masterTranscript'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Master's Transcript
                 </label>
                 <input
@@ -1331,7 +1444,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['masterDegree.transcript'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['masterDegree.transcript'] && (
                   <LoadingSpinner size='sm' />
@@ -1341,9 +1456,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='masterDegree'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Master's Degree
                 </label>
                 <input
@@ -1358,7 +1473,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['masterDegree.degree'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['masterDegree.degree'] && (
                   <LoadingSpinner size='sm' />
@@ -1374,22 +1491,22 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
       )}
 
       {studyLevel === 'master' && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Work Experience
           </h3>
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className='border border-gray-200 rounded-lg p-4 mb-4'
+              className='bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-2xl p-6 mb-4 shadow-xl'
             >
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   <label
                     htmlFor={`workExperience.${index}.company`}
-                    className='label'
+                    className='block text-sm font-medium text-gray-900 mb-2'
                   >
-                    Company Name <span className='text-red-500'>*</span>
+                    Company Name <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register(`workExperience.${index}.company`, {
@@ -1399,15 +1516,15 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                           : undefined,
                     })}
                     id={`workExperience.${index}.company`}
-                    className={`input ${
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                       errors.workExperience?.[index]?.company
-                        ? 'input-error'
+                        ? 'border-red-300'
                         : ''
                     }`}
                     placeholder='e.g., Tech Solutions Ltd.'
                   />
                   {errors.workExperience?.[index]?.company && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.workExperience[index].company.message}
                     </p>
                   )}
@@ -1416,9 +1533,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <div>
                   <label
                     htmlFor={`workExperience.${index}.position`}
-                    className='label'
+                    className='block text-sm font-medium text-gray-900 mb-2'
                   >
-                    Position <span className='text-red-500'>*</span>
+                    Position <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register(`workExperience.${index}.position`, {
@@ -1428,15 +1545,15 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                           : undefined,
                     })}
                     id={`workExperience.${index}.position`}
-                    className={`input ${
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                       errors.workExperience?.[index]?.position
-                        ? 'input-error'
+                        ? 'border-red-300'
                         : ''
                     }`}
                     placeholder='e.g., Software Engineer'
                   />
                   {errors.workExperience?.[index]?.position && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.workExperience[index].position.message}
                     </p>
                   )}
@@ -1445,9 +1562,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <div>
                   <label
                     htmlFor={`workExperience.${index}.startDate`}
-                    className='label'
+                    className='block text-sm font-medium text-gray-900 mb-2'
                   >
-                    Start Date <span className='text-red-500'>*</span>
+                    Start Date <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register(`workExperience.${index}.startDate`, {
@@ -1458,14 +1575,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                     })}
                     type='month'
                     id={`workExperience.${index}.startDate`}
-                    className={`input ${
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                       errors.workExperience?.[index]?.startDate
-                        ? 'input-error'
+                        ? 'border-red-300'
                         : ''
                     }`}
                   />
                   {errors.workExperience?.[index]?.startDate && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.workExperience[index].startDate.message}
                     </p>
                   )}
@@ -1474,7 +1591,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <div>
                   <label
                     htmlFor={`workExperience.${index}.endDate`}
-                    className='label'
+                    className='block text-sm font-medium text-gray-900 mb-2'
                   >
                     End Date
                   </label>
@@ -1482,14 +1599,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                     {...register(`workExperience.${index}.endDate`)}
                     type='month'
                     id={`workExperience.${index}.endDate`}
-                    className='input'
+                    className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all'
                   />
                 </div>
 
                 <div className='md:col-span-2'>
                   <label
                     htmlFor={`workExperience.${index}.responsibilities`}
-                    className='label'
+                    className='block text-sm font-medium text-gray-900 mb-2'
                   >
                     Responsibilities
                   </label>
@@ -1497,7 +1614,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                     {...register(`workExperience.${index}.responsibilities`)}
                     id={`workExperience.${index}.responsibilities`}
                     rows={3}
-                    className='input'
+                    className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none'
                     placeholder='Describe your key responsibilities...'
                   />
                 </div>
@@ -1506,9 +1623,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   <div className='flex items-center gap-4'>
                     <label
                       htmlFor={`workExperience.${index}.document`}
-                      className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                      className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                     >
-                      <FiUpload className='mr-1' />
+                      <FiUpload className='mr-1 h-5 w-5' />
                       Upload Experience Certificate
                     </label>
                     <input
@@ -1527,7 +1644,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       className='hidden'
                     />
                     {uploadedFiles[`workExperience.${index}.document`] && (
-                      <FiCheck className='text-green-600' />
+                      <div className='p-2 bg-green-100 rounded-lg'>
+                        <FiCheck className='h-5 w-5 text-green-600' />
+                      </div>
                     )}
                     {uploadingFiles[`workExperience.${index}.document`] && (
                       <LoadingSpinner size='sm' />
@@ -1543,9 +1662,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 <button
                   type='button'
                   onClick={() => remove(index)}
-                  className='mt-4 text-red-600 hover:text-red-700 flex items-center text-sm'
+                  className='mt-4 px-6 py-3 border border-red-300 text-red-600 rounded-xl font-medium hover:bg-red-50 transition-colors'
                 >
-                  <FiTrash className='mr-1' />
+                  <FiTrash className='mr-1 inline' />
                   Remove Experience
                 </button>
               )}
@@ -1563,16 +1682,16 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 responsibilities: '',
               })
             }
-            className='btn btn-secondary mt-4 flex items-center'
+            className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors mt-4 flex items-center'
           >
-            <FiPlus className='mr-2' />
+            <FiPlus className='mr-2 h-5 w-5' />
             Add Another Experience
           </button>
         </div>
       )}
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Additional Certifications
         </h3>
         <div className='flex items-center mb-4'>
@@ -1580,11 +1699,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
             {...register('additionalCertification')}
             type='checkbox'
             id='additionalCertification'
-            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+            className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
           />
           <label
             htmlFor='additionalCertification'
-            className='ml-2 block text-sm text-gray-900'
+            className='ml-2 block text-sm font-medium text-gray-900'
           >
             Do you have any additional certifications or diplomas?
           </label>
@@ -1593,8 +1712,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         {additionalCertification && (
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='diplomaProgram' className='label'>
-                Program Name <span className='text-red-500'>*</span>
+              <label
+                htmlFor='diplomaProgram'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Program Name <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('diploma.programName', {
@@ -1603,8 +1725,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                     : undefined,
                 })}
                 id='diplomaProgram'
-                className={`input ${
-                  errors.diploma?.programName ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.diploma?.programName ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select program</option>
@@ -1615,15 +1737,18 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.diploma?.programName && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.diploma.programName.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='diplomaInstitution' className='label'>
-                Institution <span className='text-red-500'>*</span>
+              <label
+                htmlFor='diplomaInstitution'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Institution <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('diploma.institution', {
@@ -1633,20 +1758,23 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='text'
                 id='diplomaInstitution'
-                className={`input ${
-                  errors.diploma?.institution ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.diploma?.institution ? 'border-red-300' : ''
                 }`}
               />
               {errors.diploma?.institution && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.diploma.institution.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='diplomaYear' className='label'>
-                Completion Year <span className='text-red-500'>*</span>
+              <label
+                htmlFor='diplomaYear'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Completion Year <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('diploma.year', {
@@ -1656,7 +1784,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   valueAsNumber: true,
                 })}
                 id='diplomaYear'
-                className={`input ${errors.diploma?.year ? 'input-error' : ''}`}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.diploma?.year ? 'border-red-300' : ''
+                }`}
               >
                 <option value=''>Select year</option>
                 {years.map((year) => (
@@ -1666,7 +1796,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 ))}
               </select>
               {errors.diploma?.year && (
-                <p className='error-text'>{errors.diploma.year.message}</p>
+                <p className='text-xs text-red-600 mt-1'>
+                  {errors.diploma.year.message}
+                </p>
               )}
             </div>
 
@@ -1674,9 +1806,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='diplomaDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Diploma/Certificate
                 </label>
                 <input
@@ -1691,7 +1823,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['diploma.document'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['diploma.document'] && (
                   <LoadingSpinner size='sm' />
@@ -1705,8 +1839,8 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         )}
       </div>
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           HEC Equivalence (For Foreign Degrees)
         </h3>
         <div className='flex items-center mb-4'>
@@ -1714,11 +1848,11 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
             {...register('hecEquivalenceStatus.applied')}
             type='checkbox'
             id='hecApplied'
-            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+            className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
           />
           <label
             htmlFor='hecApplied'
-            className='ml-2 block text-sm text-gray-900'
+            className='ml-2 block text-sm font-medium text-gray-900'
           >
             Have you applied for HEC equivalence for any foreign degree?
           </label>
@@ -1727,9 +1861,12 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         {hecApplied && (
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='hecObtainedDate' className='label'>
+              <label
+                htmlFor='hecObtainedDate'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Equivalence Obtained Date{' '}
-                <span className='text-red-500'>*</span>
+                <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('hecEquivalenceStatus.obtainedDate', {
@@ -1739,12 +1876,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                 })}
                 type='month'
                 id='hecObtainedDate'
-                className={`input ${
-                  errors.hecEquivalenceStatus?.obtainedDate ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.hecEquivalenceStatus?.obtainedDate
+                    ? 'border-red-300'
+                    : ''
                 }`}
               />
               {errors.hecEquivalenceStatus?.obtainedDate && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.hecEquivalenceStatus.obtainedDate.message}
                 </p>
               )}
@@ -1754,9 +1893,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='hecDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload HEC Equivalence Certificate
                 </label>
                 <input
@@ -1775,7 +1914,9 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['hecEquivalenceStatus.document'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['hecEquivalenceStatus.document'] && (
                   <LoadingSpinner size='sm' />
@@ -1790,28 +1931,31 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         )}
       </div>
 
-      <div>
-        <label htmlFor='educationalGap' className='label'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <label
+          htmlFor='educationalGap'
+          className='block text-sm font-medium text-gray-900 mb-2'
+        >
           Educational Gap (if any)
         </label>
         <textarea
           {...register('educationalGap')}
           id='educationalGap'
           rows={3}
-          className='input'
+          className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none'
           placeholder='Please explain any gaps in your education (e.g., medical reasons, work experience, family circumstances)...'
         />
-        <p className='text-sm text-gray-500 mt-1'>
+        <p className='text-sm text-gray-600 mt-1 max-w-2xl'>
           If you have any gap years in your education, please provide a detailed
           explanation.
         </p>
       </div>
 
-      <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-        <h4 className='text-sm font-medium text-gray-900 mb-2'>
+      <div className='bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-2xl p-6 shadow-xl'>
+        <h4 className='text-lg font-medium text-gray-900 mb-2'>
           Important Notes:
         </h4>
-        <ul className='text-sm text-gray-700 space-y-1 list-disc list-inside'>
+        <ul className='text-sm text-gray-600 space-y-1 list-disc list-inside'>
           <li>All documents must be clear and legible</li>
           <li>Transcripts should show all semesters/years</li>
           <li>
@@ -1828,14 +1972,14 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
         <button
           type='button'
           onClick={onPrevious}
-          className='btn btn-secondary'
+          className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors'
           disabled={isSubmitting || isSaving}
         >
           Previous
         </button>
         <button
           type='submit'
-          className='btn btn-primary'
+          className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105'
           disabled={isSubmitting || isSaving}
           onClick={handleSubmit(onSubmit)}
         >

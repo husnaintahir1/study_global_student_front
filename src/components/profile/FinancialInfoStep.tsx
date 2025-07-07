@@ -135,7 +135,6 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
       delete cleanedData.sponsorDetails;
     }
 
-    // Include document IDs if uploaded
     if (uploadedFiles['bankStatementDocId']) {
       cleanedData.bankStatementDocId = uploadedFiles['bankStatementDocId'];
     }
@@ -205,21 +204,26 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
 
   return (
     <div className='space-y-8'>
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Financial Information
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <label htmlFor='fundingSource' className='label'>
-              Primary Source of Funding <span className='text-red-500'>*</span>
+            <label
+              htmlFor='fundingSource'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Primary Source of Funding <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('fundingSource', {
                 validate: validators.required('Funding source'),
               })}
               id='fundingSource'
-              className={`input ${errors.fundingSource ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.fundingSource ? 'border-red-300' : ''
+              }`}
             >
               <option value=''>Select funding source</option>
               {fundingSources.map((source) => (
@@ -229,21 +233,26 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               ))}
             </select>
             {errors.fundingSource && (
-              <p className='error-text'>{errors.fundingSource.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.fundingSource.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor='budgetConstraints' className='label'>
-              Annual Budget Range <span className='text-red-500'>*</span>
+            <label
+              htmlFor='budgetConstraints'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
+              Annual Budget Range <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('budgetConstraints', {
                 validate: validators.required('Budget range'),
               })}
               id='budgetConstraints'
-              className={`input ${
-                errors.budgetConstraints ? 'input-error' : ''
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.budgetConstraints ? 'border-red-300' : ''
               }`}
             >
               <option value=''>Select budget range</option>
@@ -254,7 +263,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               ))}
             </select>
             {errors.budgetConstraints && (
-              <p className='error-text'>{errors.budgetConstraints.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.budgetConstraints.message}
+              </p>
             )}
           </div>
         </div>
@@ -262,14 +273,17 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
 
       {(fundingSource === 'Family Sponsor' ||
         fundingSource === 'Third Party Sponsor') && (
-        <div>
-          <h3 className='text-lg font-medium text-gray-900 mb-4'>
+        <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+          <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
             Sponsor Details
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             <div>
-              <label htmlFor='sponsorName' className='label'>
-                Sponsor Name <span className='text-red-500'>*</span>
+              <label
+                htmlFor='sponsorName'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Sponsor Name <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('sponsorDetails.sponsorName', {
@@ -277,30 +291,33 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 })}
                 type='text'
                 id='sponsorName'
-                className={`input ${
-                  errors.sponsorDetails?.sponsorName ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.sponsorDetails?.sponsorName ? 'border-red-300' : ''
                 }`}
                 placeholder='Full name'
               />
               {errors.sponsorDetails?.sponsorName && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.sponsorDetails.sponsorName.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='sponsorRelation' className='label'>
+              <label
+                htmlFor='sponsorRelation'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
                 Relationship with Sponsor{' '}
-                <span className='text-red-500'>*</span>
+                <span className='text-red-600'>*</span>
               </label>
               <select
                 {...register('sponsorDetails.sponsorRelation', {
                   validate: validators.required('Sponsor relation'),
                 })}
                 id='sponsorRelation'
-                className={`input ${
-                  errors.sponsorDetails?.sponsorRelation ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.sponsorDetails?.sponsorRelation ? 'border-red-300' : ''
                 }`}
               >
                 <option value=''>Select relationship</option>
@@ -311,15 +328,18 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 ))}
               </select>
               {errors.sponsorDetails?.sponsorRelation && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.sponsorDetails.sponsorRelation.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='sponsorCnic' className='label'>
-                Sponsor CNIC/ID Number <span className='text-red-500'>*</span>
+              <label
+                htmlFor='sponsorCnic'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Sponsor CNIC/ID Number <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('sponsorDetails.sponsorCnic', {
@@ -328,20 +348,23 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 type='text'
                 id='sponsorCnic'
                 placeholder='XXXXX-XXXXXXX-X'
-                className={`input ${
-                  errors.sponsorDetails?.sponsorCnic ? 'input-error' : ''
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                  errors.sponsorDetails?.sponsorCnic ? 'border-red-300' : ''
                 }`}
               />
               {errors.sponsorDetails?.sponsorCnic && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.sponsorDetails.sponsorCnic.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor='sponsorIncome' className='label'>
-                Sponsor Annual Income <span className='text-red-500'>*</span>
+              <label
+                htmlFor='sponsorIncome'
+                className='block text-sm font-medium text-gray-900 mb-2'
+              >
+                Sponsor Annual Income <span className='text-red-600'>*</span>
               </label>
               <input
                 {...register('sponsorDetails.sponsorAnnualIncome', {
@@ -350,14 +373,14 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 type='text'
                 id='sponsorIncome'
                 placeholder='e.g., PKR 2,400,000'
-                className={`input ${
+                className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
                   errors.sponsorDetails?.sponsorAnnualIncome
-                    ? 'input-error'
+                    ? 'border-red-300'
                     : ''
                 }`}
               />
               {errors.sponsorDetails?.sponsorAnnualIncome && (
-                <p className='error-text'>
+                <p className='text-xs text-red-600 mt-1'>
                   {errors.sponsorDetails.sponsorAnnualIncome.message}
                 </p>
               )}
@@ -366,21 +389,21 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       )}
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Financial Documents
         </h3>
-        <div className='space-y-4'>
-          <div className='flex items-center space-x-2'>
+        <div className='space-y-6'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('bankStatementsSubmitted')}
               type='checkbox'
               id='bankStatements'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
             <label
               htmlFor='bankStatements'
-              className='text-sm font-medium text-gray-700'
+              className='text-sm font-medium text-gray-900'
             >
               Bank statements for last 6 months available
             </label>
@@ -390,9 +413,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='bankStatementDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Bank Statements
                 </label>
                 <input
@@ -406,7 +429,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['bankStatementDocId'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['bankStatementDocId'] && (
                   <LoadingSpinner size='sm' />
@@ -419,16 +444,16 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
             </div>
           )}
 
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('financialAffidavit')}
               type='checkbox'
               id='financialAffidavit'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
             <label
               htmlFor='financialAffidavit'
-              className='text-sm font-medium text-gray-700'
+              className='text-sm font-medium text-gray-900'
             >
               Financial affidavit/sponsorship letter available
             </label>
@@ -438,9 +463,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='financialAffidavitDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Financial Affidavit
                 </label>
                 <input
@@ -454,7 +479,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['financialAffidavitDocId'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['financialAffidavitDocId'] && (
                   <LoadingSpinner size='sm' />
@@ -469,30 +496,30 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       </div>
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Visa & Travel History
         </h3>
-        <div className='space-y-4'>
+        <div className='space-y-6'>
           <div>
-            <div className='flex items-center space-x-2 mb-3'>
+            <div className='flex items-center space-x-3 mb-3'>
               <input
                 {...register('visaRejections')}
                 type='checkbox'
                 id='visaRejections'
-                className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
               />
               <label
                 htmlFor='visaRejections'
-                className='text-sm font-medium text-gray-700'
+                className='text-sm font-medium text-gray-900'
               >
                 I have previous visa rejections
               </label>
             </div>
             {visaRejections && (
-              <div className='ml-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
-                <div className='flex'>
-                  <FiAlertCircle className='h-5 w-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0' />
+              <div className='bg-yellow-50/80 backdrop-blur-md border border-yellow-200/50 rounded-2xl p-6 shadow-xl'>
+                <div className='flex items-start gap-3'>
+                  <FiAlertCircle className='h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0' />
                   <p className='text-sm text-yellow-800'>
                     Please provide details about visa rejections in the
                     additional information section below. Include country, visa
@@ -504,16 +531,21 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
           </div>
 
           <div>
-            <label htmlFor='travelHistory' className='label'>
+            <label
+              htmlFor='travelHistory'
+              className='block text-sm font-medium text-gray-900 mb-2'
+            >
               International Travel History{' '}
-              <span className='text-red-500'>*</span>
+              <span className='text-red-600'>*</span>
             </label>
             <select
               {...register('travelHistory', {
                 validate: validators.required('Travel history'),
               })}
               id='travelHistory'
-              className={`input ${errors.travelHistory ? 'input-error' : ''}`}
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                errors.travelHistory ? 'border-red-300' : ''
+              }`}
             >
               <option value=''>Select travel history</option>
               {travelHistoryOptions.map((option) => (
@@ -523,27 +555,29 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               ))}
             </select>
             {errors.travelHistory && (
-              <p className='error-text'>{errors.travelHistory.message}</p>
+              <p className='text-xs text-red-600 mt-1'>
+                {errors.travelHistory.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           Legal & Medical Documents
         </h3>
-        <div className='space-y-4'>
-          <div className='flex items-center space-x-2'>
+        <div className='space-y-6'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('policeClearanceCertificate')}
               type='checkbox'
               id='policeClearance'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
             <label
               htmlFor='policeClearance'
-              className='text-sm font-medium text-gray-700'
+              className='text-sm font-medium text-gray-900'
             >
               Police clearance certificate available
             </label>
@@ -553,9 +587,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='policeClearanceDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Police Clearance Certificate
                 </label>
                 <input
@@ -569,7 +603,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['policeClearanceDocId'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['policeClearanceDocId'] && (
                   <LoadingSpinner size='sm' />
@@ -581,31 +617,34 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
             </div>
           )}
 
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('medicalClearance')}
               type='checkbox'
               id='medicalClearance'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
             <label
               htmlFor='medicalClearance'
-              className='text-sm font-medium text-gray-700'
+              className='text-sm font-medium text-gray-900'
             >
               Medical examination completed
             </label>
           </div>
           {medicalClearance && (
-            <div className='ml-6 space-y-2'>
+            <div className='ml-6 space-y-4'>
               <div>
-                <label htmlFor='medicalConditions' className='label'>
+                <label
+                  htmlFor='medicalConditions'
+                  className='block text-sm font-medium text-gray-900 mb-2'
+                >
                   Medical Conditions (if any)
                 </label>
                 <textarea
                   {...register('medicalConditions')}
                   id='medicalConditions'
-                  rows={2}
-                  className='input'
+                  rows={3}
+                  className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none'
                   placeholder='Please mention any medical conditions that might affect your studies...'
                 />
               </div>
@@ -613,9 +652,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='medicalClearanceDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload Medical Clearance Certificate
                   </label>
                   <input
@@ -629,7 +668,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['medicalClearanceDocId'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['medicalClearanceDocId'] && (
                     <LoadingSpinner size='sm' />
@@ -643,16 +684,16 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
             </div>
           )}
 
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('domicileCertificateSubmitted')}
               type='checkbox'
               id='domicile'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
             <label
               htmlFor='domicile'
-              className='text-sm font-medium text-gray-700'
+              className='text-sm font-medium text-gray-900'
             >
               Domicile certificate available
             </label>
@@ -662,9 +703,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='domicileCertificateDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload Domicile Certificate
                 </label>
                 <input
@@ -679,7 +720,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['domicileCertificateDocId'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['domicileCertificateDocId'] && (
                   <LoadingSpinner size='sm' />
@@ -691,14 +734,14 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
             </div>
           )}
 
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-3'>
             <input
               {...register('nocRequired')}
               type='checkbox'
               id='noc'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+              className='h-4 w-4 text-blue-600 focus:ring-blue-500/20 border-gray-300 rounded transition-all'
             />
-            <label htmlFor='noc' className='text-sm font-medium text-gray-700'>
+            <label htmlFor='noc' className='text-sm font-medium text-gray-900'>
               NOC required from current employer/institution
             </label>
           </div>
@@ -707,9 +750,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
               <div className='flex items-center gap-4'>
                 <label
                   htmlFor='nocDoc'
-                  className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                 >
-                  <FiUpload className='mr-1' />
+                  <FiUpload className='mr-1 h-5 w-5' />
                   Upload No Objection Certificate
                 </label>
                 <input
@@ -723,7 +766,9 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
                   className='hidden'
                 />
                 {uploadedFiles['nocDocId'] && (
-                  <FiCheck className='text-green-600' />
+                  <div className='p-2 bg-green-100 rounded-lg'>
+                    <FiCheck className='h-5 w-5 text-green-600' />
+                  </div>
                 )}
                 {uploadingFiles['nocDocId'] && <LoadingSpinner size='sm' />}
               </div>
@@ -735,15 +780,18 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       </div>
 
-      <div>
-        <label htmlFor='additionalInfo' className='label'>
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <label
+          htmlFor='additionalInfo'
+          className='block text-sm font-medium text-gray-900 mb-2'
+        >
           Additional Information
         </label>
         <textarea
           {...register('additionalInfo')}
           id='additionalInfo'
           rows={4}
-          className='input'
+          className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all resize-none'
           placeholder='Please provide any additional information relevant to your application, including visa rejection details if applicable...'
         />
         <p className='text-sm text-gray-600 mt-1'>
@@ -752,11 +800,11 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </p>
       </div>
 
-      <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-        <div className='flex'>
-          <FiInfo className='h-5 w-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0' />
+      <div className='bg-blue-50/80 backdrop-blur-md border border-blue-200/50 rounded-2xl p-6 shadow-xl'>
+        <div className='flex items-start gap-3'>
+          <FiInfo className='h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0' />
           <div>
-            <h4 className='text-sm font-medium text-blue-900 mb-1'>
+            <h4 className='text-sm font-medium text-blue-900 mb-2'>
               Document Requirements & Privacy
             </h4>
             <p className='text-sm text-blue-700'>
@@ -771,15 +819,20 @@ export const FinancialInfoStep: React.FC<FinancialInfoStepProps> = ({
         </div>
       </div>
 
-      <div className='flex justify-between'>
-        <button type='button' onClick={onPrevious} className='btn btn-outline'>
+      <div className='flex justify-between mt-8'>
+        <button
+          type='button'
+          onClick={onPrevious}
+          className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors'
+          disabled={isSubmitting || isSaving}
+        >
           Previous
         </button>
         <button
           type='button'
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting || isSaving}
-          className='btn btn-primary flex items-center'
+          className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center'
         >
           {isSubmitting || isSaving ? (
             <LoadingSpinner size='sm' />

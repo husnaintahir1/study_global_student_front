@@ -25,6 +25,12 @@ import { Messages } from '@/pages/Messages';
 import { Tasks } from '@/pages/Tasks';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import OAuthSuccess from './pages/OAuthSuccess';
+import { CourseFinder } from './pages/CourseFinder';
+import { CourseDetail } from './pages/CourseDetail';
+import { ProposalsPage } from './pages/ProposalsPage';
+import { ProposalDetailPage } from './pages/ProposalDetailPage';
+import { ChecklistPage } from './pages/CheckList';
+import StandaloneChat from './pages/ChatPage';
 
 function App() {
   return (
@@ -61,6 +67,21 @@ function App() {
                     element={<Navigate to={ROUTES.DASHBOARD} replace />}
                   />
                   <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+                  <Route
+                    path={ROUTES.COURSE_FINDER}
+                    element={<CourseFinder />}
+                  />
+                  <Route
+                    path={ROUTES.COURSE_DETAILS}
+                    element={<CourseDetail />}
+                  />
+                  <Route path={ROUTES.PROPOSAL} element={<ProposalsPage />} />
+                  <Route path={ROUTES.CHECK_LIST} element={<ChecklistPage />} />
+                  <Route path={ROUTES.MESSAGES} element={<StandaloneChat />} />
+                  <Route
+                    path={ROUTES.PROPOSAL_DETAILS}
+                    element={<ProposalDetailPage />}
+                  />
                   <Route path={ROUTES.PROFILE} element={<Profile />} />
                   <Route
                     path={ROUTES.APPLICATIONS}

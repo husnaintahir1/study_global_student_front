@@ -271,22 +271,28 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
 
   return (
     <div className='space-y-8'>
-      <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
+      {/* Test Selection */}
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h3 className='text-2xl font-semibold text-gray-900 mb-2'>
           English Proficiency & Standardized Tests
         </h3>
-        <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4'>
-          <div className='flex'>
-            <FiInfo className='h-5 w-5 text-blue-600 mt-0.5 mr-2 flex-shrink-0' />
-            <p className='text-sm text-blue-800'>
-              Add only the tests you have taken or plan to take. English
-              proficiency tests are usually required for international
-              applications. Upload official score reports for each test.
-            </p>
+        <div className='bg-amber-50/80 backdrop-blur-md border border-amber-200/50 rounded-xl p-4 mb-4'>
+          <div className='flex items-start gap-3'>
+            <FiInfo className='h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0' />
+            <div>
+              <h4 className='text-sm font-medium text-amber-900 mb-2'>
+                Important Information
+              </h4>
+              <p className='text-sm text-amber-700'>
+                Add only the tests you have taken or plan to take. English
+                proficiency tests are usually required for international
+                applications. Upload official score reports for each test.
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           {testOptions.map(
             (test) =>
               !selectedTests.includes(test.value) && (
@@ -294,13 +300,13 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                   key={test.value}
                   type='button'
                   onClick={() => addTest(test.value)}
-                  className='flex items-start p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors'
+                  className='flex items-start p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:bg-blue-50/50 transition-all duration-300'
                 >
-                  <FiPlus className='h-5 w-5 text-primary-600 mt-0.5 mr-3 flex-shrink-0' />
+                  <FiPlus className='h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0' />
                   <div className='text-left'>
                     <p className='font-medium text-gray-900'>{test.label}</p>
                     <p className='text-sm text-gray-600'>{test.description}</p>
-                    <p className='text-xs text-gray-500'>
+                    <p className='text-xs text-gray-500 mt-1'>
                       Validity: {test.validity}
                     </p>
                     <p className='text-xs text-gray-500'>
@@ -313,24 +319,27 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         </div>
       </div>
 
+      {/* Selected Tests */}
       <div className='space-y-6'>
         {selectedTests.includes('ielts') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>IELTS Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                IELTS Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('ielts')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
                 <div>
-                  <label className='label'>
-                    Listening <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Listening <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.listening', {
@@ -342,20 +351,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.ieltsScores?.listening ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.listening ? 'border-red-300' : ''
                     }`}
                     placeholder='0-9'
                   />
                   {errors.ieltsScores?.listening && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.listening.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Reading <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Reading <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.reading', {
@@ -367,20 +376,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.ieltsScores?.reading ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.reading ? 'border-red-300' : ''
                     }`}
                     placeholder='0-9'
                   />
                   {errors.ieltsScores?.reading && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.reading.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Writing <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Writing <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.writing', {
@@ -392,20 +401,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.ieltsScores?.writing ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.writing ? 'border-red-300' : ''
                     }`}
                     placeholder='0-9'
                   />
                   {errors.ieltsScores?.writing && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.writing.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Speaking <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Speaking <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.speaking', {
@@ -417,20 +426,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.ieltsScores?.speaking ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.speaking ? 'border-red-300' : ''
                     }`}
                     placeholder='0-9'
                   />
                   {errors.ieltsScores?.speaking && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.speaking.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Overall Band <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Overall Band <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.total', {
@@ -442,32 +451,32 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.ieltsScores?.total ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.total ? 'border-red-300' : ''
                     }`}
                     placeholder='0-9'
                   />
                   {errors.ieltsScores?.total && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.total.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Test Date <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Test Date <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('ieltsScores.testDate', {
                       validate: validators.required('Test date'),
                     })}
                     type='date'
-                    className={`input ${
-                      errors.ieltsScores?.testDate ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.ieltsScores?.testDate ? 'border-red-300' : ''
                     }`}
                   />
                   {errors.ieltsScores?.testDate && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.ieltsScores.testDate.message}
                     </p>
                   )}
@@ -477,9 +486,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='ieltsDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload IELTS Score Report
                   </label>
                   <input
@@ -493,7 +502,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['ielts'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['ielts'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -507,21 +518,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('toefl') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>TOEFL iBT Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                TOEFL iBT Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('toefl')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('toeflScore.total', {
@@ -532,30 +545,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input ${
-                    errors.toeflScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.toeflScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='0-120'
                 />
                 {errors.toeflScore?.total && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.toeflScore.total.message}
                   </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('toeflScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.toeflScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.toeflScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.toeflScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.toeflScore.testDate.message}
                   </p>
                 )}
@@ -564,9 +577,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='toeflDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload TOEFL Score Report
                   </label>
                   <input
@@ -580,7 +593,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['toefl'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['toefl'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -594,21 +609,21 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('sat') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>SAT Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>SAT Score</h4>
               <button
                 type='button'
                 onClick={() => removeTest('sat')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('satScore.total', {
@@ -619,28 +634,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.satScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.satScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='400-1600'
                 />
                 {errors.satScore?.total && (
-                  <p className='error-text'>{errors.satScore.total.message}</p>
+                  <p className='text-xs text-red-600 mt-1'>
+                    {errors.satScore.total.message}
+                  </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('satScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.satScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.satScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.satScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.satScore.testDate.message}
                   </p>
                 )}
@@ -649,9 +666,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='satDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload SAT Score Report
                   </label>
                   <input
@@ -665,7 +682,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['sat'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['sat'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -679,21 +698,21 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('act') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>ACT Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>ACT Score</h4>
               <button
                 type='button'
                 onClick={() => removeTest('act')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Composite Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Composite Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('actScore.composite', {
@@ -704,30 +723,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.actScore?.composite ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.actScore?.composite ? 'border-red-300' : ''
                   }`}
                   placeholder='1-36'
                 />
                 {errors.actScore?.composite && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.actScore.composite.message}
                   </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('actScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.actScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.actScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.actScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.actScore.testDate.message}
                   </p>
                 )}
@@ -736,9 +755,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='actDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload ACT Score Report
                   </label>
                   <input
@@ -752,7 +771,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['act'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['act'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -766,22 +787,22 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('gre') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>GRE Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>GRE Score</h4>
               <button
                 type='button'
                 onClick={() => removeTest('gre')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <label className='label'>
-                    Verbal <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Verbal <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('greScore.verbal', {
@@ -792,20 +813,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                       },
                     })}
                     type='number'
-                    className={`input ${
-                      errors.greScore?.verbal ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.greScore?.verbal ? 'border-red-300' : ''
                     }`}
                     placeholder='130-170'
                   />
                   {errors.greScore?.verbal && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.greScore.verbal.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Quantitative <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Quantitative <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('greScore.quantitative', {
@@ -816,20 +837,20 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                       },
                     })}
                     type='number'
-                    className={`input ${
-                      errors.greScore?.quantitative ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.greScore?.quantitative ? 'border-red-300' : ''
                     }`}
                     placeholder='130-170'
                   />
                   {errors.greScore?.quantitative && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.greScore.quantitative.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Analytical Writing <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Analytical Writing <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('greScore.analytical', {
@@ -847,32 +868,32 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     })}
                     type='number'
                     step='0.5'
-                    className={`input ${
-                      errors.greScore?.analytical ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.greScore?.analytical ? 'border-red-300' : ''
                     }`}
                     placeholder='0-6'
                   />
                   {errors.greScore?.analytical && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.greScore.analytical.message}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className='label'>
-                    Test Date <span className='text-red-500'>*</span>
+                  <label className='block text-sm font-medium text-gray-900 mb-2'>
+                    Test Date <span className='text-red-600'>*</span>
                   </label>
                   <input
                     {...register('greScore.testDate', {
                       validate: validators.required('Test date'),
                     })}
                     type='date'
-                    className={`input ${
-                      errors.greScore?.testDate ? 'input-error' : ''
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                      errors.greScore?.testDate ? 'border-red-300' : ''
                     }`}
                   />
                   {errors.greScore?.testDate && (
-                    <p className='error-text'>
+                    <p className='text-xs text-red-600 mt-1'>
                       {errors.greScore.testDate.message}
                     </p>
                   )}
@@ -882,9 +903,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='greDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload GRE Score Report
                   </label>
                   <input
@@ -898,7 +919,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['gre'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['gre'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -912,21 +935,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('gmat') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>GMAT Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                GMAT Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('gmat')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('gmatScore.total', {
@@ -937,28 +962,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.gmatScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.gmatScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='200-800'
                 />
                 {errors.gmatScore?.total && (
-                  <p className='error-text'>{errors.gmatScore.total.message}</p>
+                  <p className='text-xs text-red-600 mt-1'>
+                    {errors.gmatScore.total.message}
+                  </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('gmatScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.gmatScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.gmatScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.gmatScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.gmatScore.testDate.message}
                   </p>
                 )}
@@ -967,9 +994,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='gmatDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload GMAT Score Report
                   </label>
                   <input
@@ -983,7 +1010,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['gmat'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['gmat'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -997,21 +1026,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('neet') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>NEET Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                NEET Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('neet')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('neetScore.total', {
@@ -1022,28 +1053,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.neetScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.neetScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='0-720'
                 />
                 {errors.neetScore?.total && (
-                  <p className='error-text'>{errors.neetScore.total.message}</p>
+                  <p className='text-xs text-red-600 mt-1'>
+                    {errors.neetScore.total.message}
+                  </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('neetScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.neetScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.neetScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.neetScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.neetScore.testDate.message}
                   </p>
                 )}
@@ -1052,9 +1085,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='neetDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload NEET Score Report
                   </label>
                   <input
@@ -1068,7 +1101,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['neet'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['neet'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -1082,21 +1117,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('pte') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>PTE Academic Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                PTE Academic Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('pte')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('pteScore.total', {
@@ -1107,28 +1144,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.pteScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.pteScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='10-90'
                 />
                 {errors.pteScore?.total && (
-                  <p className='error-text'>{errors.pteScore.total.message}</p>
+                  <p className='text-xs text-red-600 mt-1'>
+                    {errors.pteScore.total.message}
+                  </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('pteScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.pteScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.pteScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.pteScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.pteScore.testDate.message}
                   </p>
                 )}
@@ -1137,9 +1176,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='pteDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload PTE Score Report
                   </label>
                   <input
@@ -1153,7 +1192,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['pte'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['pte'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -1167,23 +1208,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('duolingo') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>
+              <h4 className='text-xl font-semibold text-gray-900'>
                 Duolingo English Test Score
               </h4>
               <button
                 type='button'
                 onClick={() => removeTest('duolingo')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('duolingoScore.total', {
@@ -1194,30 +1235,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.duolingoScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.duolingoScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='10-160'
                 />
                 {errors.duolingoScore?.total && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.duolingoScore.total.message}
                   </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('duolingoScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.duolingoScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.duolingoScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.duolingoScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.duolingoScore.testDate.message}
                   </p>
                 )}
@@ -1226,9 +1267,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='duolingoDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload Duolingo Score Report
                   </label>
                   <input
@@ -1242,7 +1283,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['duolingo'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['duolingo'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -1256,21 +1299,23 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
 
         {selectedTests.includes('mcat') && (
-          <div className='card bg-gray-50'>
+          <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
             <div className='flex justify-between items-center mb-4'>
-              <h4 className='font-medium text-gray-900'>MCAT Score</h4>
+              <h4 className='text-xl font-semibold text-gray-900'>
+                MCAT Score
+              </h4>
               <button
                 type='button'
                 onClick={() => removeTest('mcat')}
-                className='text-gray-400 hover:text-red-600'
+                className='text-gray-400 hover:text-red-600 transition-colors'
               >
                 <FiX className='h-5 w-5' />
               </button>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div>
-                <label className='label'>
-                  Total Score <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2'>
+                  Total Score <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('mcatScore.total', {
@@ -1281,28 +1326,30 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     },
                   })}
                   type='number'
-                  className={`input max-w-xs ${
-                    errors.mcatScore?.total ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all max-w-xs ${
+                    errors.mcatScore?.total ? 'border-red-300' : ''
                   }`}
                   placeholder='472-528'
                 />
                 {errors.mcatScore?.total && (
-                  <p className='error-text'>{errors.mcatScore.total.message}</p>
+                  <p className='text-xs text-red-600 mt-1'>
+                    {errors.mcatScore.total.message}
+                  </p>
                 )}
-                <label className='label mt-4'>
-                  Test Date <span className='text-red-500'>*</span>
+                <label className='block text-sm font-medium text-gray-900 mb-2 mt-4'>
+                  Test Date <span className='text-red-600'>*</span>
                 </label>
                 <input
                   {...register('mcatScore.testDate', {
                     validate: validators.required('Test date'),
                   })}
                   type='date'
-                  className={`input ${
-                    errors.mcatScore?.testDate ? 'input-error' : ''
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all ${
+                    errors.mcatScore?.testDate ? 'border-red-300' : ''
                   }`}
                 />
                 {errors.mcatScore?.testDate && (
-                  <p className='error-text'>
+                  <p className='text-xs text-red-600 mt-1'>
                     {errors.mcatScore.testDate.message}
                   </p>
                 )}
@@ -1311,9 +1358,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                 <div className='flex items-center gap-4'>
                   <label
                     htmlFor='mcatDoc'
-                    className='text-sm text-primary-600 hover:text-primary-700 cursor-pointer flex items-center'
+                    className='text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer flex items-center'
                   >
-                    <FiUpload className='mr-1' />
+                    <FiUpload className='mr-1 h-5 w-5' />
                     Upload MCAT Score Report
                   </label>
                   <input
@@ -1327,7 +1374,9 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
                     className='hidden'
                   />
                   {uploadedFiles['mcat'] && (
-                    <FiCheck className='text-green-600' />
+                    <div className='p-2 bg-green-100 rounded-lg'>
+                      <FiCheck className='h-5 w-5 text-green-600' />
+                    </div>
                   )}
                   {uploadingFiles['mcat'] && <LoadingSpinner size='sm' />}
                 </div>
@@ -1341,68 +1390,10 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         )}
       </div>
 
-      {/* <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
-          Academic Performance
-        </h3>
-        <div className='space-y-4'>
-          <div>
-            <label htmlFor='backlogs' className='label'>
-              Do you have any backlogs/failures/re-attempts?
-            </label>
-            <textarea
-              {...register('backlogs')}
-              id='backlogs'
-              rows={2}
-              className='input'
-              placeholder='If yes, please provide details (e.g., 2 backlogs in 3rd semester, cleared in re-exam)'
-            />
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div>
-        <h3 className='text-lg font-medium text-gray-900 mb-4'>
-          Work Experience
-        </h3>
-        <div className='space-y-4'>
-          <div>
-            <label htmlFor='workExperience' className='label'>
-              Professional Work Experience
-            </label>
-            <textarea
-              {...register('workExperience')}
-              id='workExperience'
-              rows={3}
-              className='input'
-              placeholder='Briefly describe your work experience including company names, positions, and duration...'
-            />
-            <p className='text-sm text-gray-600 mt-1'>
-              Include internships, full-time positions, or relevant professional
-              experience
-            </p>
-          </div>
-
-          <div className='flex items-center space-x-2'>
-            <input
-              {...register('partTimeWork')}
-              type='checkbox'
-              id='partTimeWork'
-              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-            />
-            <label
-              htmlFor='partTimeWork'
-              className='text-sm font-medium text-gray-700'
-            >
-              I am interested in part-time work opportunities while studying
-            </label>
-          </div>
-        </div>
-      </div> */}
-
-      <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-        <h4 className='text-sm font-medium text-gray-900 mb-2'>
-          Important Notes:
+      {/* Important Notes */}
+      <div className='bg-gradient-to-r from-white to-gray-50/50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300'>
+        <h4 className='text-lg font-semibold text-gray-900 mb-2'>
+          Important Notes
         </h4>
         <ul className='text-sm text-gray-700 space-y-1 list-disc list-inside'>
           <li>Ensure all test scores are from official test reports</li>
@@ -1421,15 +1412,21 @@ export const TestScoresStep: React.FC<TestScoresStepProps> = ({
         </ul>
       </div>
 
-      <div className='flex justify-between'>
-        <button type='button' onClick={onPrevious} className='btn btn-outline'>
+      {/* Navigation Buttons */}
+      <div className='flex justify-between mt-8'>
+        <button
+          type='button'
+          onClick={onPrevious}
+          className='px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors'
+          disabled={isSubmitting || isSaving}
+        >
           Previous
         </button>
         <button
           type='button'
           onClick={handleSubmit(onSubmit)}
           disabled={isSubmitting || isSaving}
-          className='btn btn-primary flex items-center'
+          className='bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl text-lg font-bold hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105 flex items-center'
         >
           {isSubmitting || isSaving ? (
             <LoadingSpinner size='sm' />

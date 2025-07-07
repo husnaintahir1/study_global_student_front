@@ -96,3 +96,67 @@ export function getRelativeTime(date: string | Date): string {
 export function generateId(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
+// Add this function to your /src/utils/helpers.ts file
+
+/**
+ * Format a number as currency
+ * @param amount - The amount to format
+ * @param currency - The currency code (default: 'USD')
+ * @param locale - The locale for formatting (default: 'en-US')
+ * @returns Formatted currency string
+ */
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'USD',
+  locale: string = 'en-US'
+): string => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return '$0.00';
+  }
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch (error) {
+    // Fallback for invalid locale or currency
+    return `$${amount.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+};
+
+// Alternative simpler version if you only need USD formatting
+export const formatUSD = (amount: number): string => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return '$0';
+  }
+
+  return `$${amount.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+// For different currencies based on your needs
+export const formatPKR = (amount: number): string => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return 'PKR 0';
+  }
+
+  return `PKR ${amount.toLocaleString('en-PK', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+// Example usage:
+// formatCurrency(50000) // "$50,000"
+// formatCurrency(50000, 'PKR', 'en-PK') // "PKR 50,000"
+// formatCurrency(50000.50) // "$50,000.50"
+// formatUSD(25000) // "$25,000"
+// formatPKR(100000) // "PKR 100,000"
