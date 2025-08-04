@@ -10,6 +10,12 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
   APPLICATIONS: '/applications',
+  APPLICATIONS_NEW: '/applications/new',
+  APPLICATION_DETAILS: '/applications/:id',
+  APPLICATION_UNIVERSITIES: '/applications/:id/universities',
+  UNIVERSITIES: '/universities',
+  OFFERS: '/offers',
+  APPLICATION_EDIT: '/applications/:id/edit',
   DOCUMENTS: '/documents',
   APPOINTMENTS: '/appointments',
   MESSAGES: '/messages',
@@ -20,7 +26,7 @@ export const ROUTES = {
   COURSE_FINDER: '/course-finder',
   COURSE_DETAILS: '/courses/:id',
   CHECK_LIST: '/checklist',
-
+CALENDAR: '/calendar',
   PROPOSAL: '/proposals',
   PROPOSAL_DETAILS: '/proposals/:id',
 } as const;

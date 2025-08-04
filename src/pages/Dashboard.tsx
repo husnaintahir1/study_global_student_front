@@ -33,7 +33,12 @@ import { profileService } from '@/services/profile.service';
 import { appointmentService } from '@/services/appointment.service';
 import { documentService } from '@/services/document.service';
 import { ProfileCompletenessService } from '@/utils/completenessEngine';
-import { ROUTES, DOCUMENT_TYPES, APPOINTMENT_STATUS } from '@/utils/constants';
+import {
+  ROUTES,
+  DOCUMENT_TYPES,
+  APPOINTMENT_STATUS,
+  API_BASE_URL,
+} from '@/utils/constants';
 import { formatDate, formatDateTime, getRelativeTime } from '@/utils/helpers';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
@@ -209,7 +214,8 @@ export const Dashboard = () => {
   }) => {
     const Icon = getSectionIcon(section);
     const color = getSectionColor(status);
-
+    console.log(color, ' color', title, 'title');
+    // console.log(status, ' status', section, 'section');
     return (
       <div
         className={`p-4 rounded-lg border-2 ${
@@ -239,12 +245,16 @@ export const Dashboard = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className='w-full bg-gray-200 rounded-full h-2 mb-2'>
-          <div
-            className={`bg-${color}-500 h-2 rounded-full transition-all duration-500`}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
+        <div
+          className={`h-2 rounded-full transition-all duration-500 ${
+            color === 'green'
+              ? 'bg-green-600'
+              : color === 'yellow'
+              ? 'bg-yellow-600'
+              : 'bg-gray-600'
+          }`}
+          style={{ width: `${percentage}%` }}
+        />
 
         {/* Missing Fields Indicator */}
         {missingFields.length > 0 && status !== 'complete' && (
@@ -522,7 +532,17 @@ export const Dashboard = () => {
                         >
                           {doc.status}
                         </span>
-                        <button className='p-1 text-gray-400 hover:text-gray-600'>
+                        <button
+                          onClick={() =>
+                            window.open(
+                              `${API_BASE_URL.replace('/api/v1', '')}${
+                                doc.filePath
+                              }`,
+                              '_blank'
+                            )
+                          }
+                          className='p-1 text-gray-400 hover:text-gray-600'
+                        >
                           <FiEye className='h-4 w-4' />
                         </button>
                       </div>

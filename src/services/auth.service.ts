@@ -21,7 +21,10 @@ export interface ResetPasswordData {
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    console.log('from auth service');
+
     const response = await api.post<AuthResponse>('/auth/login', credentials);
+    console.log(response, 'from auth service');
     this.setAuthData(response);
     return response;
   }

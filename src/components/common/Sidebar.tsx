@@ -38,6 +38,7 @@ const navigation = [
   { name: 'Documents', href: ROUTES.DOCUMENTS, icon: FiFolder },
   { name: 'Appointments', href: ROUTES.APPOINTMENTS, icon: FiCalendar },
   { name: 'Applications', href: ROUTES.APPLICATIONS, icon: FiFileText },
+  { name: 'Calendar', href: ROUTES.CALENDAR, icon: FiFileText },
   { name: 'Messages', href: ROUTES.MESSAGES, icon: FiMessageSquare },
 ];
 

@@ -18,7 +18,7 @@ import { LoginForm } from '@/pages/LoginForm';
 import { Signup } from '@/pages/Signup';
 import { Dashboard } from '@/pages/Dashboard';
 import { Profile } from '@/pages/Profile';
-import { Applications } from '@/pages/Applications';
+
 import { Documents } from '@/pages/Documents';
 import { Appointments } from '@/pages/Appointments';
 import { Messages } from '@/pages/Messages';
@@ -31,6 +31,14 @@ import { ProposalsPage } from './pages/ProposalsPage';
 import { ProposalDetailPage } from './pages/ProposalDetailPage';
 import { ChecklistPage } from './pages/CheckList';
 import StandaloneChat from './pages/ChatPage';
+import ApplicationDashboard from './pages/Applications';
+
+import CreateApplication from '@/pages/CreateApplication';
+import ApplicationDetails from '@/pages/ApplicationDetails';
+import UniversitySelector from '@/pages/UniversitySelector';
+import UniversityBrowser from '@/pages/UniversityBrowser';
+import OfferManagement from '@/pages/OfferManagement';
+import CalendarDashboard from './pages/CalendarDashboard';
 
 function App() {
   return (
@@ -66,6 +74,34 @@ function App() {
                     index
                     element={<Navigate to={ROUTES.DASHBOARD} replace />}
                   />
+
+                  <Route
+                    path={ROUTES.APPLICATIONS}
+                    element={<ApplicationDashboard />}
+                  />
+                  <Route
+                    path={ROUTES.APPLICATIONS_NEW}
+                    element={<CreateApplication />}
+                  />
+                  <Route
+                    path={ROUTES.APPLICATION_DETAILS}
+                    element={<ApplicationDetails />}
+                  />
+                  <Route
+                    path={ROUTES.APPLICATION_UNIVERSITIES}
+                    element={<UniversitySelector />}
+                  />
+                  <Route
+                    path={ROUTES.UNIVERSITIES}
+                    element={<UniversityBrowser />}
+                  />
+                  <Route path={ROUTES.CALENDAR} element={<CalendarDashboard />} />
+                  <Route path={ROUTES.OFFERS} element={<OfferManagement />} />
+                  <Route
+                    path={ROUTES.APPLICATION_EDIT}
+                    element={<CreateApplication />}
+                  />
+
                   <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
                   <Route
                     path={ROUTES.COURSE_FINDER}
@@ -83,10 +119,7 @@ function App() {
                     element={<ProposalDetailPage />}
                   />
                   <Route path={ROUTES.PROFILE} element={<Profile />} />
-                  <Route
-                    path={ROUTES.APPLICATIONS}
-                    element={<Applications />}
-                  />
+
                   <Route path={ROUTES.DOCUMENTS} element={<Documents />} />
                   <Route
                     path={ROUTES.APPOINTMENTS}

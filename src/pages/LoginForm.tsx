@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { validators } from '@/utils/validators';
 import { ROUTES } from '@/utils/constants';
@@ -17,21 +17,45 @@ export const LoginForm: React.FC = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    clearErrors,
   } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true);
+      setErrorMessage(''); // Clear any previous errors
       await login(data);
-    } catch (error) {
-      // Error handled in context
+    } catch (error: any) {
+      // Handle API errors
+      let message = 'Something went wrong. Please try again.';
+
+      if (error?.response?.data?.error) {
+        // Handle API error response
+        message = error.response.data.error;
+      } else if (error?.message) {
+        // Handle other error types
+        message = error.message;
+      }
+
+      setErrorMessage(message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Clear error message when user starts typing
+  const handleInputChange = (field: keyof LoginFormData) => {
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+    if (errors[field]) {
+      clearErrors(field);
     }
   };
 
@@ -43,6 +67,21 @@ export const LoginForm: React.FC = () => {
           <p className='mt-2 text-gray-600'>Sign in to your student account</p>
         </div>
 
+        {/* API Error Message */}
+        {errorMessage && (
+          <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
+            <div className='flex items-center'>
+              <FiAlertCircle className='h-5 w-5 text-red-400 mr-3' />
+              <div>
+                <h3 className='text-sm font-medium text-red-800'>
+                  Login Failed
+                </h3>
+                <p className='text-sm text-red-700 mt-1'>{errorMessage}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
           <div>
             <label htmlFor='email' className='label'>
@@ -53,7 +92,10 @@ export const LoginForm: React.FC = () => {
                 <FiMail className='h-5 w-5 text-gray-400' />
               </div>
               <input
-                {...register('email', { validate: validators.email })}
+                {...register('email', {
+                  validate: validators.email,
+                  onChange: () => handleInputChange('email'),
+                })}
                 type='email'
                 id='email'
                 className={`input pl-10 ${errors.email ? 'input-error' : ''}`}
@@ -74,7 +116,10 @@ export const LoginForm: React.FC = () => {
                 <FiLock className='h-5 w-5 text-gray-400' />
               </div>
               <input
-                {...register('password', { required: 'Password is required' })}
+                {...register('password', {
+                  required: 'Password is required',
+                  onChange: () => handleInputChange('password'),
+                })}
                 type={showPassword ? 'text' : 'password'}
                 id='password'
                 className={`input pl-10 pr-10 ${

@@ -381,8 +381,8 @@ export const Profile = () => {
                   </div>
 
                   <h1 className='text-xl font-bold mb-1'>
-                    {profile.personalInfo?.fullName?.firstName || 'First'}{' '}
-                    {profile.personalInfo?.fullName?.lastName || 'Last'}
+                    {profile.personalInfo?.fullName?.firstName || 'Profile'}{' '}
+                    {profile.personalInfo?.fullName?.lastName || 'Name'}
                   </h1>
                   <p className='text-white/80 text-sm mb-3'>
                     {profile.studyPreferences?.preferredCourse || 'Student'}

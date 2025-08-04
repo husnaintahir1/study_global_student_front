@@ -52,8 +52,12 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 export function getErrorMessage(error: any): string {
+  console.log(error, 'FROMMMMMMMMM ERORORRRORO');
   if (error?.response?.data?.message) {
     return error.response.data.message;
+  }
+  if (error?.response?.data?.error) {
+    return error.response.data.error;
   }
   if (error?.message) {
     return error.message;

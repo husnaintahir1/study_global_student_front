@@ -8,6 +8,7 @@ import {
   FiPhone,
   FiEye,
   FiEyeOff,
+  FiAlertCircle,
 } from 'react-icons/fi';
 import { useAuth } from '@/hooks/useAuth';
 import { validators } from '@/utils/validators';
@@ -28,12 +29,14 @@ export const SignupForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
+    clearErrors,
   } = useForm<SignupFormData>();
 
   const password = watch('password');
@@ -41,12 +44,37 @@ export const SignupForm: React.FC = () => {
   const onSubmit = async (data: SignupFormData) => {
     try {
       setIsLoading(true);
+      setErrorMessage(''); // Clear any previous errors
       const { confirmPassword, ...signupData } = data;
       await signup(signupData);
-    } catch (error) {
-      // Error handled in context
+    } catch (error: any) {
+      // Handle API errors
+      let message = 'Something went wrong. Please try again.';
+
+      if (error?.response?.data?.error) {
+        // Handle API error response
+        message = error.response.data.error;
+      } else if (error?.response?.data?.message) {
+        // Handle alternative message field
+        message = error.response.data.message;
+      } else if (error?.message) {
+        // Handle other error types
+        message = error.message;
+      }
+
+      setErrorMessage(message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Clear error message when user starts typing
+  const handleInputChange = (field: keyof SignupFormData) => {
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+    if (errors[field]) {
+      clearErrors(field);
     }
   };
 
@@ -56,6 +84,21 @@ export const SignupForm: React.FC = () => {
         <h2 className='text-3xl font-bold text-gray-900'>Create an account</h2>
         <p className='mt-2 text-gray-600'>Start your study abroad journey</p>
       </div>
+
+      {/* API Error Message */}
+      {errorMessage && (
+        <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
+          <div className='flex items-center'>
+            <FiAlertCircle className='h-5 w-5 text-red-400 mr-3' />
+            <div>
+              <h3 className='text-sm font-medium text-red-800'>
+                Registration Failed
+              </h3>
+              <p className='text-sm text-red-700 mt-1'>{errorMessage}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
         <div>
@@ -67,7 +110,10 @@ export const SignupForm: React.FC = () => {
               <FiUser className='h-5 w-5 text-gray-400' />
             </div>
             <input
-              {...register('name', { validate: validators.required('Name') })}
+              {...register('name', {
+                validate: validators.required('Name'),
+                onChange: () => handleInputChange('name'),
+              })}
               type='text'
               id='name'
               className={`input pl-10 ${errors.name ? 'input-error' : ''}`}
@@ -86,7 +132,10 @@ export const SignupForm: React.FC = () => {
               <FiMail className='h-5 w-5 text-gray-400' />
             </div>
             <input
-              {...register('email', { validate: validators.email })}
+              {...register('email', {
+                validate: validators.email,
+                onChange: () => handleInputChange('email'),
+              })}
               type='email'
               id='email'
               className={`input pl-10 ${errors.email ? 'input-error' : ''}`}
@@ -105,7 +154,10 @@ export const SignupForm: React.FC = () => {
               <FiPhone className='h-5 w-5 text-gray-400' />
             </div>
             <input
-              {...register('phone', { validate: validators.phone })}
+              {...register('phone', {
+                validate: validators.phone,
+                onChange: () => handleInputChange('phone'),
+              })}
               type='tel'
               id='phone'
               className={`input pl-10 ${errors.phone ? 'input-error' : ''}`}
@@ -124,7 +176,10 @@ export const SignupForm: React.FC = () => {
               <FiLock className='h-5 w-5 text-gray-400' />
             </div>
             <input
-              {...register('password', { validate: validators.password })}
+              {...register('password', {
+                validate: validators.password,
+                onChange: () => handleInputChange('password'),
+              })}
               type={showPassword ? 'text' : 'password'}
               id='password'
               className={`input pl-10 pr-10 ${
@@ -160,6 +215,7 @@ export const SignupForm: React.FC = () => {
             <input
               {...register('confirmPassword', {
                 validate: validators.confirmPassword(password),
+                onChange: () => handleInputChange('confirmPassword'),
               })}
               type={showConfirmPassword ? 'text' : 'password'}
               id='confirmPassword'

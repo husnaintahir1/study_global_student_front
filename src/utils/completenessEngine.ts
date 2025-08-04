@@ -864,25 +864,49 @@ export class ProfileCompletenessService {
    * Main calculation method
    */
   public static calculateCompleteness(profile: any): ProfileCompletenessResult {
+    const safeProfile = {
+      personalInfo: profile?.personalInfo || {},
+      educationalBackground: profile?.educationalBackground || {},
+      testScores: profile?.testScores || {},
+      studyPreferences: profile?.studyPreferences || {},
+      financialInfo: profile?.financialInfo || {},
+    };
+
     const sectionResults = {
       personalInfo: this.calculateSectionCompleteness(
-        profile.personalInfo,
+        safeProfile.personalInfo,
         this.PERSONAL_INFO_CONFIG
       ),
       educationalBackground: this.calculateSectionCompleteness(
-        profile.educationalBackground,
+        safeProfile.educationalBackground,
         this.EDUCATIONAL_BACKGROUND_CONFIG
       ),
-      testScores: this.calculateSectionCompleteness(
-        profile.testScores,
-        this.TEST_SCORES_CONFIG
-      ),
+      testScores: (() => {
+        // Special handling for test scores - must have at least one English test
+        const result = this.calculateSectionCompleteness(
+          safeProfile.testScores,
+          this.TEST_SCORES_CONFIG
+        );
+
+        // Override percentage if no English proficiency test exists
+        const hasEnglishTest =
+          this.TEST_SCORES_CONFIG.validators?.hasEnglishProficiencyTest(
+            safeProfile.testScores
+          );
+
+        if (!hasEnglishTest && result.percentage > 30) {
+          // Cap at 30% if no English test (only optional fields can contribute)
+          result.percentage = Math.min(30, result.percentage);
+        }
+
+        return result;
+      })(),
       studyPreferences: this.calculateSectionCompleteness(
-        profile.studyPreferences,
+        safeProfile.studyPreferences,
         this.STUDY_PREFERENCES_CONFIG
       ),
       financialInfo: this.calculateSectionCompleteness(
-        profile.financialInfo,
+        safeProfile.financialInfo,
         this.FINANCIAL_INFO_CONFIG
       ),
     };
@@ -976,16 +1000,34 @@ export class ProfileCompletenessService {
     );
 
     // Calculate overall section percentage
-    const essentialWeight = 70; // Essential fields are 70% of the section
-    const conditionalWeight = 20; // Conditional fields are 20% of the section
-    const optionalWeight = 10; // Optional fields are 10% of the section
+    // Only include field groups that actually have fields
+    let totalWeight = 0;
+    let weightedSum = 0;
 
-    const percentage = Math.round(
-      (essentialResult.percentage * essentialWeight +
-        conditionalResult.percentage * conditionalWeight +
-        optionalResult.percentage * optionalWeight) /
-        100
-    );
+    // Essential fields weight (70% if they exist)
+    if (config.essential.length > 0) {
+      const essentialWeight = 70;
+      totalWeight += essentialWeight;
+      weightedSum += essentialResult.percentage * essentialWeight;
+    }
+
+    // Conditional fields weight (20% if they exist and apply)
+    if (conditionalFields.length > 0) {
+      const conditionalWeight = 20;
+      totalWeight += conditionalWeight;
+      weightedSum += conditionalResult.percentage * conditionalWeight;
+    }
+
+    // Optional fields weight (10% if they exist)
+    if (config.optional.length > 0) {
+      const optionalWeight = 10;
+      totalWeight += optionalWeight;
+      weightedSum += optionalResult.percentage * optionalWeight;
+    }
+
+    // If no fields exist at all, return 0%
+    const percentage =
+      totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
 
     // Find missing critical fields
     const missingCriticalFields = this.findMissingCriticalFields(
@@ -1023,9 +1065,10 @@ export class ProfileCompletenessService {
     totalWeight: number;
     completedWeight: number;
   } {
+    // Return 0% for empty field groups instead of 100%
     if (fields.length === 0) {
       return {
-        percentage: 100,
+        percentage: 0,
         completed: 0,
         totalWeight: 0,
         completedWeight: 0,
@@ -1053,8 +1096,9 @@ export class ProfileCompletenessService {
       }
     }
 
+    // Return 0% if no applicable fields (all were skipped due to conditions)
     const percentage =
-      totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 100;
+      totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
 
     return {
       percentage,
@@ -1151,18 +1195,34 @@ export class ProfileCompletenessService {
       return false;
     }
 
+    // For strings, check if not just whitespace
+    if (typeof value === 'string' && value.trim() === '') {
+      return false;
+    }
+
     // For arrays, check if not empty
     if (Array.isArray(value) && value.length === 0) {
       return false;
     }
 
-    // For objects, check if not empty
+    // For objects, check if not empty (but allow Date objects)
     if (
       typeof value === 'object' &&
       !Array.isArray(value) &&
+      !(value instanceof Date) &&
       Object.keys(value).length === 0
     ) {
       return false;
+    }
+
+    // For boolean values, consider them complete if they are explicitly set
+    if (typeof value === 'boolean') {
+      return true;
+    }
+
+    // For numbers, check if not NaN and not 0 (unless 0 is valid)
+    if (typeof value === 'number') {
+      return !isNaN(value);
     }
 
     // Apply custom validator if provided
@@ -1388,11 +1448,17 @@ export class ProfileCompletenessService {
   private static getNestedValue(obj: any, path: string): any {
     if (!obj || !path) return null;
 
-    return path.split('.').reduce((current, key) => {
-      return current && current[key] !== undefined && current[key] !== null
-        ? current[key]
-        : null;
-    }, obj);
+    try {
+      return path.split('.').reduce((current, key) => {
+        // Return null if current is null/undefined or if the key doesn't exist
+        if (current === null || current === undefined || !(key in current)) {
+          return null;
+        }
+        return current[key];
+      }, obj);
+    } catch (error) {
+      return null;
+    }
   }
 
   /**
