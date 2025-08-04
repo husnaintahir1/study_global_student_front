@@ -41,7 +41,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   const [profilePicturePreview, setProfilePicturePreview] = useState<
     string | null
   >(
-    API_BASE_URL.replace('/api/v1', '') + data.personalInfo?.profilePicture ||
+    API_BASE_URL + data.personalInfo?.profilePicture ||
       null
   );
 
@@ -81,7 +81,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
         const response = await documentService.uploadProfilePicture(file);
         setValue('profilePicture', response?.fileUrl);
         setProfilePicturePreview(
-          API_BASE_URL.replace('/api/v1', '') + response?.fileUrl
+          API_BASE_URL + response?.fileUrl
         );
         toast.success('Profile picture uploaded successfully');
       } else {

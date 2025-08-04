@@ -363,7 +363,7 @@ export const Profile = () => {
                     {profile.personalInfo?.profilePicture ? (
                       <img
                         src={
-                          API_BASE_URL.replace('/api/v1', '') +
+                          API_BASE_URL +
                           profile.personalInfo.profilePicture
                         }
                         alt='Profile'

@@ -612,7 +612,7 @@ export const Documents = () => {
                         <button
                           onClick={() =>
                             window.open(
-                              `${API_BASE_URL.replace('/api/v1', '')}${
+                              `${API_BASE_URL}${
                                 doc.filePath
                               }`,
                               '_blank'
