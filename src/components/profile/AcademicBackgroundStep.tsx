@@ -1638,7 +1638,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                           handleFileUpload(
                             file,
                             `workExperience.${index}.document`,
-                            'certificate'
+                            'experience_letter'
                           );
                       }}
                       className='hidden'
@@ -1908,7 +1908,7 @@ export const AcademicBackgroundStep: React.FC<AcademicBackgroundStepProps> = ({
                       handleFileUpload(
                         file,
                         'hecEquivalenceStatus.document',
-                        'certificate'
+                        'other'
                       );
                   }}
                   className='hidden'

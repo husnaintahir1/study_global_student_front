@@ -120,9 +120,7 @@ export const Dashboard = () => {
       setUpcomingAppointments(upcoming);
 
       // Calculate stats
-      const completedAppointments = appointments.filter(
-        (apt) => apt.status === 'completed'
-      ).length;
+      const completedAppointments = appointments?.length;
       const avgTestScore = profile?.testScores?.ieltsScores?.total || 0;
 
       setStats({
@@ -535,9 +533,7 @@ export const Dashboard = () => {
                         <button
                           onClick={() =>
                             window.open(
-                              `${API_BASE_URL}${
-                                doc.filePath
-                              }`,
+                              `${API_BASE_URL}${doc.filePath}`,
                               '_blank'
                             )
                           }

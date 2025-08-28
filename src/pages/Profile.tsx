@@ -43,6 +43,7 @@ import toast from 'react-hot-toast';
 // Import the ProfileBuilder component for editing
 import { ProfileBuilder } from '@/components/profile/ProfileBuilder';
 import { API_BASE_URL } from '@/utils/constants';
+import { universityService } from '@/services/UniversityService';
 
 export const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -50,7 +51,7 @@ export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [reviewStatus, setReviewStatus] = useState(null);
-  const [universities, setUniversities] = useState({});
+  const [universities, setUniversities] = useState([]);
 
   useEffect(() => {
     fetchProfile();
@@ -84,19 +85,26 @@ export const Profile = () => {
     }
   };
 
+  console.log(
+    profile?.studyPreferences?.preferredUniversities,
+    'Preferred Universities'
+  );
   const fetchUniversityNames = async (universityIds) => {
+    console.log(universityIds, 'University IDs');
     try {
-      const universityPromises = universityIds.map((id) =>
-        fetch(`/api/universities/${id}`)
-          .then((res) => res.json())
-          .catch(() => ({ id, name: `University ${id}` }))
-      );
-      const universityData = await Promise.all(universityPromises);
-      const universityMap = {};
-      universityData.forEach((uni) => {
-        universityMap[uni.id] = uni;
+      const universityPromises = universityIds.map(async (id) => {
+        try {
+          const res = await universityService.getUniversityById(id);
+          console.log(res, 'RESSSSSS');
+          return res;
+        } catch (error) {
+          console.error(`Failed to fetch university ${id}:`, error);
+          return { id, name: `University ${id}` };
+        }
       });
-      setUniversities(universityMap);
+      const universityData = await Promise.all(universityPromises);
+      console.log(universityData, 'University Data');
+      setUniversities(universityData);
     } catch (error) {
       console.error('Failed to fetch university names:', error);
     }
@@ -362,10 +370,7 @@ export const Profile = () => {
                   <div className='relative inline-block mb-4'>
                     {profile.personalInfo?.profilePicture ? (
                       <img
-                        src={
-                          API_BASE_URL +
-                          profile.personalInfo.profilePicture
-                        }
+                        src={API_BASE_URL + profile.personalInfo.profilePicture}
                         alt='Profile'
                         className='h-24 w-24 rounded-full object-cover border-4 border-white/20'
                       />
@@ -1696,34 +1701,54 @@ export const Profile = () => {
                             )
                           </h3>
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                            {profile.studyPreferences.preferredUniversities.map(
-                              (universityId, index) => (
-                                <div
-                                  key={universityId}
-                                  className='bg-gray-50 rounded-lg p-4 border border-gray-200'
-                                >
-                                  <div className='flex items-center gap-3'>
-                                    <div className='w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center'>
-                                      <span className='text-sm font-semibold text-blue-600'>
-                                        {index + 1}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <p className='font-medium text-gray-900'>
-                                        {universities[universityId]?.name ||
-                                          `University ${universityId}`}
-                                      </p>
-                                      {universities[universityId]?.city && (
-                                        <p className='text-sm text-gray-600'>
-                                          {universities[universityId].city},{' '}
-                                          {universities[universityId].country}
-                                        </p>
-                                      )}
-                                    </div>
+                            {universities?.map((university, index) => (
+                              <div
+                                key={university.id}
+                                className='bg-white rounded-lg p-4 border border-gray-200 hover:shadow-sm transition-shadow'
+                              >
+                                {/* University info */}
+                                <div className='flex items-start gap-3 mb-3'>
+                                  <div className='w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0'>
+                                    <span className='text-xs font-semibold text-blue-600'>
+                                      {index + 1}
+                                    </span>
+                                  </div>
+                                  <div className='flex-1'>
+                                    <h4 className='font-medium text-gray-900 mb-1'>
+                                      {university.name}
+                                    </h4>
+                                    <p className='text-sm text-gray-600'>
+                                      {university.city}, {university.country}
+                                    </p>
                                   </div>
                                 </div>
-                              )
-                            )}
+
+                                {/* Status and details */}
+                                <div className='flex items-center justify-between'>
+                                  <div className='flex items-center gap-2'>
+                                    {/* Ranking */}
+                                    {university.details?.ranking && (
+                                      <span className='text-xs text-gray-500'>
+                                        Rank #{university.details.ranking}
+                                      </span>
+                                    )}
+
+                                    {/* MOU Status */}
+                                    {university.mouStatus && (
+                                      <span
+                                        className={`px-2 py-1 text-xs rounded-full ${
+                                          university.mouStatus === 'direct'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-yellow-100 text-yellow-800'
+                                        }`}
+                                      >
+                                        {university.mouStatus}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}

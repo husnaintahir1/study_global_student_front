@@ -27,7 +27,30 @@ export interface UniversitySearchParams {
   limit?: number;
 }
 
+// Additional interfaces for the new API endpoints
+export interface Course {
+  id: number;
+  name: string;
+  fees: string;
+  duration: string;
+  intakes: string[];
+  universityId?: number;
+}
+
+export interface CreateUniversityRequest {
+  universityName: string;
+  country: string;
+  programs?: Program[];
+}
+
+export interface UpdateUniversityRequest {
+  universityName?: string;
+  country?: string;
+  programs?: Program[];
+}
+
 class UniversityService {
+  // Existing methods for student applications
   async getUniversities(filters?: UniversityFilters): Promise<{
     message: string;
     universities: University[];
@@ -84,7 +107,41 @@ class UniversityService {
     return this.getUniversities({ country, program });
   }
 
-  // Helper methods
+  // New API v1 methods for university management
+  async createUniversity(
+    universityData: CreateUniversityRequest
+  ): Promise<University> {
+    return api.post<University>('/universities', universityData);
+  }
+
+  async getAllUniversitiesV1(): Promise<University[]> {
+    return api.get<University[]>('/universities');
+  }
+
+  async getUnassignedCourses(): Promise<Course[]> {
+    return api.get<Course[]>('/universities/unassigned');
+  }
+
+  async getUniversityById(id: number): Promise<University> {
+    return api.get<University>(`/universities/${id}`);
+  }
+
+  async updateUniversityById(
+    id: number,
+    updateData: UpdateUniversityRequest
+  ): Promise<University> {
+    return api.put<University>(`/universities/${id}`, updateData);
+  }
+
+  async deleteUniversityById(id: number): Promise<{ message: string }> {
+    return api.delete(`/universities/${id}`);
+  }
+
+  async getUniversityCourses(id: number): Promise<Course[]> {
+    return api.get<Course[]>(`/universities/${id}/courses`);
+  }
+
+  // Helper methods (existing)
   getUniqueCountries(universities: University[]): string[] {
     const countries = universities.map((uni) => uni.country);
     return [...new Set(countries)].sort();
@@ -97,7 +154,7 @@ class UniversityService {
     return [...new Set(programs)].sort();
   }
 
-  getUniversityById(
+  getUniversityByIdLocal(
     universities: University[],
     id: number
   ): University | undefined {
@@ -226,6 +283,31 @@ class UniversityService {
       selectedIntake,
       priority,
     };
+  }
+
+  // Additional helper methods for courses
+  getUniqueCourseNames(courses: Course[]): string[] {
+    const courseNames = courses.map((course) => course.name);
+    return [...new Set(courseNames)].sort();
+  }
+
+  getCourseById(courses: Course[], id: number): Course | undefined {
+    return courses.find((course) => course.id === id);
+  }
+
+  filterCoursesByName(courses: Course[], name: string): Course[] {
+    if (!name) return courses;
+    return courses.filter((course) =>
+      course.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  sortCoursesByName(courses: Course[]): Course[] {
+    return [...courses].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  getCourseDisplayName(course: Course): string {
+    return `${course.name} (${course.duration})`;
   }
 }
 

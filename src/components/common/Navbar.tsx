@@ -15,7 +15,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useApp } from '@/context/AppContext';
 import { getInitials } from '@/utils/helpers';
 import { ROUTES } from '@/utils/constants';
-
+import logo from '../../assets/logo.png';
 export const Navbar = () => {
   const { user, logout } = useAuth();
   const { toggleSidebar } = useApp();
@@ -48,9 +48,8 @@ export const Navbar = () => {
               className='flex items-center ml-4 lg:ml-0 group'
             >
               <div className='flex items-center gap-3'>
-                <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow'>
-                  <FiGlobe className='h-5 w-5 text-white' />
-                </div>
+                <img src={logo} alt='' className='h-8' />
+
                 <div>
                   <h1 className='text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
                     Study Abroad Portal

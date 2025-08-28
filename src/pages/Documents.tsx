@@ -276,7 +276,7 @@ export const Documents = () => {
         </div>
 
         {/* Status Summary */}
-        {statusSummary && (
+        {/* {statusSummary && (
           <div className='grid grid-cols-2 md:grid-cols-5 gap-4 mb-8'>
             <StatCard
               icon={FiFileText}
@@ -314,7 +314,7 @@ export const Documents = () => {
               bgColor='bg-gradient-to-br from-orange-50 to-yellow-50'
             />
           </div>
-        )}
+        )} */}
 
         {/* Upload Section */}
         <div className='bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden'>
@@ -612,9 +612,7 @@ export const Documents = () => {
                         <button
                           onClick={() =>
                             window.open(
-                              `${API_BASE_URL}${
-                                doc.filePath
-                              }`,
+                              `${API_BASE_URL}${doc.filePath}`,
                               '_blank'
                             )
                           }
